@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building Community in Melbourne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF8F3;
+    --teal: #1A7A6E;
+    --teal-light: #EAF4F2;
+    --teal-mid: #2A9D8F;
+    --amber: #C47D3A;
+    --amber-light: #FDF3E7;
+    --dark: #1C2621;
+    --mid: #4A6B65;
+    --muted: #8AA49E;
+    --border: #D8E8E5;
+    --white: #FFFFFF;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--dark);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--teal-mid);
+    width: 0%;
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--teal);
+    color: var(--white);
+    padding: 4rem 1.75rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    padding: 6px 12px 6px 10px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+    transition: background 0.15s, color 0.15s;
+  }
+  .home-link:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--white);
+  }
+
+  .hero-kicker {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 8vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(255,255,255,0.82);
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.72);
+    margin-top: 1rem;
+    max-width: 340px;
+    line-height: 1.6;
+  }
+
+  .hero-divider {
+    width: 40px;
+    height: 2px;
+    background: rgba(255,255,255,0.35);
+    margin: 1.5rem 0 1rem;
+  }
+
+  /* ── TOC ── */
+  .toc-wrapper {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1.75rem;
+  }
+
+  .toc-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .toc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .toc.open { max-height: 600px; }
+
+  .toc a {
+    font-size: 0.875rem;
+    color: var(--teal);
+    text-decoration: none;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .toc a:last-child { border-bottom: none; }
+
+  .toc a:hover { color: var(--teal-mid); }
+
+  .toc-num {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 18px;
+  }
+
+  .toc-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    color: var(--teal);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .toc-toggle svg {
+    transition: transform 0.25s;
+  }
+
+  .toc-toggle.open svg { transform: rotate(180deg); }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 2.5rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-num {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.7rem, 6vw, 2.2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--teal);
+    margin-bottom: 1.25rem;
+  }
+
+  .section h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 1.75rem 0 0.6rem;
+  }
+
+  .section h3::before {
+    content: '—';
+    color: var(--teal-mid);
+    margin-right: 0.4rem;
+    font-weight: 400;
+  }
+
+  p {
+    color: var(--dark);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: var(--teal-light);
+    border-left: 3px solid var(--teal-mid);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--teal);
+    line-height: 1.65;
+  }
+
+  .callout-amber {
+    background: var(--amber-light);
+    border-left-color: var(--amber);
+    color: #7A4D1D;
+  }
+
+  /* ── BULLET LIST ── */
+  ul.guide-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 1rem;
+  }
+
+  ul.guide-list li {
+    padding: 0.45rem 0 0.45rem 1.5rem;
+    position: relative;
+    font-size: 0.975rem;
+    color: var(--dark);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.65;
+  }
+
+  ul.guide-list li:last-child { border-bottom: none; }
+
+  ul.guide-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal-mid);
+  }
+
+  ul.guide-list li strong {
+    font-weight: 600;
+    color: var(--teal);
+  }
+
+  /* ── CONTACT CARD ── */
+  .contact-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .contact-card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--teal);
+    margin-bottom: 0.6rem;
+  }
+
+  .contact-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--mid);
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .contact-row:last-child { border-bottom: none; }
+
+  .contact-label {
+    font-weight: 600;
+    color: var(--dark);
+    min-width: 58px;
+    font-size: 0.8rem;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { margin: 1.25rem 0; }
+
+  .timeline-item {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 36px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-item:last-child::before { display: none; }
+
+  .timeline-dot {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Nunito', sans-serif;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .timeline-dot.amber { background: var(--amber); }
+  .timeline-dot.mid { background: var(--mid); }
+
+  .timeline-content { flex: 1; padding-top: 0.35rem; }
+
+  .timeline-phase {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-content p { font-size: 0.925rem; margin-bottom: 0.4rem; }
+
+  /* ── PILL TAGS ── */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.75rem 0;
+  }
+
+  .tag {
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--teal);
+    border-radius: 0 0 8px 8px;
+    padding: 1.1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .highlight-box-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ── STRATEGY CARD ── */
+  .strategy-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .strategy-num {
+    font-size: 1.8rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .strategy-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+  }
+
+  .strategy-body {
+    font-size: 0.925rem;
+    color: var(--mid);
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  /* ── FOOTER ── */
+  .guide-footer {
+    background: var(--teal);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .guide-footer a {
+    color: rgba(255,255,255,0.9);
+    text-decoration: underline;
+  }
+
+  .guide-footer-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: white;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ── BACK TO TOP ── */
+  .back-top {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0 0.5rem;
+  }
+
+  .back-top button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    color: var(--muted);
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <a class="home-link" href="../index.html" aria-label="Back to home">&larr; Home</a>
+  <div class="hero-kicker">A family guide · Melbourne, Australia</div>
+  <h1>Building<br><em>Community</em><br>in a New City</h1>
+  <div class="hero-divider"></div>
+  <p class="hero-sub">What to expect, where to go, and how to find your people — for a family arriving in Melbourne.</p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc-wrapper">
+  <div class="toc-label">Contents</div>
+  <button class="toc-toggle" id="toc-btn" onclick="toggleToc()">
+    Jump to a section
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <nav class="toc" id="toc" role="navigation" aria-label="Guide sections">
+    <a href="#how-friendship-works"><span class="toc-num">01</span> How adult friendship actually works</a>
+    <a href="#strategies"><span class="toc-num">02</span> Strategies that work</a>
+    <a href="#melbourne"><span class="toc-num">03</span> Melbourne as a community city</a>
+    <a href="#neighbourhood-houses"><span class="toc-num">04</span> Neighbourhood Houses explained</a>
+    <a href="#playgroups"><span class="toc-num">05</span> Playgroups: the parent on-ramp</a>
+    <a href="#cafes"><span class="toc-num">06</span> The café as community</a>
+    <a href="#timeline"><span class="toc-num">07</span> A realistic timeline</a>
+    <a href="#closing"><span class="toc-num">08</span> Final thoughts</a>
+  </nav>
+</div>
+
+<main>
+
+  <!-- INTRO -->
+  <div class="section">
+    <p>Moving to a new city as an adult is one of the harder social challenges life throws at you. In school, friendships formed automatically — shared classrooms, shared schedules, shared proximity. As an adult, none of that is automatic. You have to be deliberate.</p>
+    <p>The good news: it works. People do it. Families relocate internationally and build rich, meaningful communities in their new home. But it takes longer than you expect, requires more initiative than feels natural, and looks different than it did in your twenties.</p>
+    <div class="callout">The single most important thing: consistency beats charisma. Showing up to the same place at the same time, week after week, is more powerful than being outgoing or interesting.</div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="how-friendship-works">
+    <div class="section-num">01</div>
+    <h2>How Adult Friendship Actually Works</h2>
+    <p>Research on adult friendship points to three core ingredients:</p>
+    <ul class="guide-list">
+      <li><strong>Proximity</strong> — being in the same physical space as someone</li>
+      <li><strong>Repetition</strong> — seeing them again and again</li>
+      <li><strong>Low-stakes context</strong> — a setting where there's no pressure to perform or impress</li>
+    </ul>
+    <p>School provided all three automatically. Adult life provides none of them automatically. The strategies in this guide are ways of recreating those conditions on purpose.</p>
+
+    <h3>The repeated exposure effect</h3>
+    <p>The more you see someone in a context you both chose, the more you naturally like them. You need roughly seven to ten relaxed encounters before real familiarity kicks in. A weekly class, a regular park, a playgroup — these provide that structure without you having to engineer it.</p>
+
+    <h3>Weak ties matter too</h3>
+    <p>Not everyone needs to become a close friend. "Weak ties" — the barista who knows your name, the parent you chat with at pickup, the neighbor you wave to — are what make a place feel like home. Strong friendships emerge from a foundation of many weak ties.</p>
+
+    <h3>What to expect emotionally</h3>
+    <p>Month one feels exciting and a little lonely. Month two or three often feels like nothing is clicking — you're familiar with people but not yet friends. This is the hardest stretch. Keep going. Around month four or five, small things shift. By month six, you have people. By year two, you have a community.</p>
+
+    <div class="callout">You're not looking for a tribe on day one. You're planting seeds. The harvest comes later — but only if you actually plant.</div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="strategies">
+    <div class="section-num">02</div>
+    <h2>Strategies That Work</h2>
+
+    <div class="strategy-card">
+      <div class="strategy-num">1</div>
+      <div class="strategy-title">Do something you enjoy, on a regular schedule, around people</div>
+      <p class="strategy-body">The single most underrated strategy. Join something you actually want to do — a sport, a class, a volunteer activity — and friendship emerges as a side effect. You're both there for the thing, not for each other. No performance pressure.</p>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">Running club</span>
+      <span class="tag">Pottery class</span>
+      <span class="tag">Community garden</span>
+      <span class="tag">Book club</span>
+      <span class="tag">Board game night</span>
+      <span class="tag">Choir</span>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">2</div>
+      <div class="strategy-title">Find your third place</div>
+      <p class="strategy-body">Sociologist Ray Oldenburg's concept: a space that is neither home nor work where you go regularly enough to become a familiar face. A café, a library, a park, a pub. Go at the same time on the same day, week after week. Becoming a regular is the whole point.</p>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">3</div>
+      <div class="strategy-title">Be the one who initiates</div>
+      <p class="strategy-body">Most people are waiting for someone else to go first. Specificity matters: "Do you want to bring the kids to Edinburgh Gardens on Sunday at 3pm?" leads somewhere. "We should hang out sometime" leads nowhere.</p>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">4</div>
+      <div class="strategy-title">Tap into your kids' lives</div>
+      <p class="strategy-body">School drop-off and pickup, weekend sport, music lessons — these create repeated contact with other parents in low-stakes shared context. You already have something in common: you're both navigating the same stage of life.</p>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">5</div>
+      <div class="strategy-title">Be vulnerable early</div>
+      <p class="strategy-body">Telling people you're new to the city, that you're finding your feet — this is not weakness. It's an invitation. Most people respond warmly. It also gives them a clear role: they can help you. People like having a role.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="melbourne">
+    <div class="section-num">03</div>
+    <h2>Melbourne as a Community City</h2>
+    <p>Melbourne is unusually well set up for the kind of community-building described in this guide.</p>
+    <ul class="guide-list">
+      <li><strong>Walkable neighborhoods</strong> — inner suburbs are genuinely walkable; you encounter your neighbors regularly</li>
+      <li><strong>Neighborhood café culture</strong> — locals have a regular café the way Parisians do; the barista remembers your order</li>
+      <li><strong>Strong community infrastructure</strong> — Neighbourhood Houses, community gardens, libraries, parks and markets are woven into everyday life</li>
+      <li><strong>Multicultural food culture</strong> — particularly in the inner north, creating natural third places and shared gathering spots</li>
+      <li><strong>Genuine pub culture</strong> — Melbourne's inner-suburb pubs with beer gardens and live music function as real community spaces</li>
+      <li><strong>Edinburgh Gardens</strong> — Fitzroy North's famous park where locals bring blankets and drinks on Sunday afternoons; Melbourne's living room</li>
+    </ul>
+    <div class="callout">Melbourne rewards consistency faster than most cities. The culture is oriented around being a regular. Show up enough and you belong.</div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="neighbourhood-houses">
+    <div class="section-num">04</div>
+    <h2>Neighbourhood Houses</h2>
+    <p>If you're not from Australia, Neighbourhood Houses are something you may never have encountered before. They are one of the most valuable community resources available to you — and most newcomers have no idea they exist.</p>
+
+    <h3>What is a Neighbourhood House?</h3>
+    <p>A Neighbourhood House is a community-run, not-for-profit centre for people of all backgrounds, ages and abilities. There are close to 400 of them across Victoria, each run independently by a local volunteer committee and shaped by the specific community it serves.</p>
+    <p>They're explicitly designed for connection — especially for people who are isolated, new to an area, or going through a transition. The movement began in the early 1970s, started by women who recognized that people needed places to gather and belong that weren't defined by work or home.</p>
+
+    <h3>What do they offer?</h3>
+    <ul class="guide-list">
+      <li><strong>Playgroups</strong> — weekly sessions where parents stay while kids play together</li>
+      <li><strong>Art and craft workshops</strong> — ceramics, painting, sewing, printmaking</li>
+      <li><strong>Community gardens</strong> — shared garden plots, composting, workshops</li>
+      <li><strong>Cooking and community meals</strong></li>
+      <li><strong>English conversation classes</strong> — welcoming to new migrants</li>
+      <li><strong>Computer and tech help</strong> — often free</li>
+      <li><strong>Fitness and wellbeing</strong> — yoga, gentle movement</li>
+      <li><strong>Social groups</strong> — brain games, book clubs, community breakfasts</li>
+      <li><strong>Children's programs</strong> — homework clubs, school holiday activities</li>
+    </ul>
+    <p>Programs are cheap or free. No membership fee. You don't have to be struggling to walk in — they welcome everyone.</p>
+
+    <h3>How is it different from a YMCA?</h3>
+    <p>The YMCA is a large, branded, membership-based organization with professional staff and physical facilities. It feels institutional because it is.</p>
+    <p>Neighbourhood Houses are almost the opposite — hyperlocal and independent, each shaped by the people who run it. The person leading Tuesday's ceramics class is often just a local who proposed the idea. It feels like a community space run by and for the community, because that's exactly what it is.</p>
+
+    <div class="highlight-box">
+      <div class="highlight-box-title">Example: Jika Jika Community Centre · Northcote</div>
+      <p style="font-size:0.925rem; margin-bottom:0.75rem;">One of Melbourne's inner north Neighbourhood Houses, on Union Street in Northcote. Runs programs across art and craft, health and wellbeing, children's activities, community gardens, music and movement, and social gatherings. They also operate a book library, seed library, and toy exchange.</p>
+      <div class="contact-card" style="margin:0;">
+        <div class="contact-row"><span class="contact-label">Phone</span> 03 9482 5100</div>
+        <div class="contact-row"><span class="contact-label">Email</span> admin@jikajika.org.au</div>
+        <div class="contact-row"><span class="contact-label">Web</span> jikajika.org.au</div>
+      </div>
+    </div>
+
+    <h3>Finding your Neighbourhood House</h3>
+    <p>Once you know your suburb, go to <strong>nhvic.org.au</strong> — there's a map showing every Neighbourhood House in Victoria. Call them, tell them you've just moved, and ask what's on. They are used to welcoming newcomers. That is, literally, their purpose.</p>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="playgroups">
+    <div class="section-num">05</div>
+    <h2>Playgroups: The Parent On-Ramp</h2>
+    <p>If you have young children, playgroups are one of the fastest and most natural ways to build a parent community.</p>
+
+    <h3>How playgroups actually work</h3>
+    <p>A playgroup is <em>not</em> childcare. You don't drop your children off. You stay the whole time.</p>
+    <p>You show up with your kids to a community hall or centre with toys and play equipment. All the kids play together while the parents stay nearby, watching and chatting. Because the kids are entertained playing with each other, you're freed from constant one-on-one engagement for an hour or ninety minutes. You can actually have a real conversation with another parent. That's where the community happens.</p>
+    <p>It's usually free or a few dollars. It runs weekly. You see the same people. That repetition is what turns acquaintances into friends.</p>
+
+    <h3>In Melbourne's inner north (Darebin Council)</h3>
+    <p>If you're in Northcote, Thornbury, Preston, Reservoir, or Alphington, you're in the City of Darebin. Darebin runs playgroups through its Early Years program and through local Neighbourhood Houses.</p>
+    <div class="contact-card">
+      <div class="contact-card-title">Darebin Early Years — Playgroups</div>
+      <div class="contact-row"><span class="contact-label">Phone</span> 8470 8347</div>
+      <div class="contact-row"><span class="contact-label">Email</span> early.years@darebin.vic.gov.au</div>
+      <div class="contact-row"><span class="contact-label">Web</span> darebin.vic.gov.au/playgroups</div>
+    </div>
+    <p>Call or email when you arrive and ask what's running in your suburb. Playgroup Victoria (<strong>playgroupvictoria.com.au</strong>) also has a map of playgroups across the state.</p>
+
+    <div class="callout">Call them when you arrive and ask what's current. They're used to this call. You won't be the first new family to make it.</div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="cafes">
+    <div class="section-num">06</div>
+    <h2>The Café as Community</h2>
+    <p>Melbourne's café culture is not just a lifestyle aesthetic. In the inner suburbs, the café functions as a genuine third place — perhaps the most accessible one for a new arrival.</p>
+
+    <h3>Why cafés work</h3>
+    <p>The barrier to entry is low — a coffee is all you need. You can linger without explanation or obligation. The ritual of going at the same time creates regularity. The barista, the regular at the corner table, the parent with the pram — these become familiar faces faster than almost anywhere else.</p>
+    <p>What makes Melbourne's café culture distinctive is that it's neighborhood-rooted. Your café is the one around the corner from your house, not in a business district. The barista is expected to know your order. The regulars are your actual neighbors.</p>
+
+    <h3>How to become a regular</h3>
+    <ul class="guide-list">
+      <li>Find a café within walking distance in your first week</li>
+      <li>Go at the same time on the same day — Saturday morning is natural for families</li>
+      <li>Order, linger, read, watch — don't rush</li>
+      <li>By week four or five, staff will recognise you</li>
+      <li>By week eight, you'll have nodded at the same people enough times that a short conversation feels natural</li>
+      <li>By month three, you have a place — a place where you belong</li>
+    </ul>
+
+    <div class="callout">Having a café where people know your name is one of the early signs that a new city is becoming home. It sounds small. It isn't.</div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="timeline">
+    <div class="section-num">07</div>
+    <h2>A Realistic Timeline</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot">M1</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Month One</div>
+          <div class="timeline-title">Establishing Presence</div>
+          <ul class="guide-list">
+            <li>Find your regular café. Same time, same day.</li>
+            <li>Contact your local Neighbourhood House. Pick one thing from their calendar and go.</li>
+            <li>Find a nearby park for weekend family time and go consistently.</li>
+            <li>Let your children lead you to other parents through playgrounds and activities.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">M2</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Months Two to Three</div>
+          <div class="timeline-title">Familiar Faces</div>
+          <ul class="guide-list">
+            <li>Keep the café, Neighbourhood House, and park routine going.</li>
+            <li>When someone suggests coffee or a playdate, say yes.</li>
+            <li>Notice neighbors. Wave, say hi, introduce yourself casually.</li>
+            <li>This phase may feel like nothing is happening. It is. You're building the foundation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot amber">M4</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Months Three to Six</div>
+          <div class="timeline-title">Connections Forming</div>
+          <ul class="guide-list">
+            <li>At least one person you're texting with or seeing socially outside of structured groups.</li>
+            <li>School enrollment brings a parent network — tap into it.</li>
+            <li>Consider joining something enjoyable on a weekly schedule that is not kid-related.</li>
+            <li>Expect one or two breakthrough moments — an invitation, a sense of being included.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot amber">M9</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Months Six to Twelve</div>
+          <div class="timeline-title">Real Community</div>
+          <ul class="guide-list">
+            <li>A genuine circle of friendly families — probably five to eight.</li>
+            <li>People who know you, notice if you're absent, think to include you.</li>
+            <li>Your café, park, and playgroup feel like yours now.</li>
+            <li>The city itself starts to feel familiar and navigable.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot mid">Y2</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Year Two and Beyond</div>
+          <div class="timeline-title">Belonging</div>
+          <ul class="guide-list">
+            <li>Friendships that exist independently of the activities that created them.</li>
+            <li>A sense of being part of a neighborhood, not just living in one.</li>
+            <li>Your kids have real friendships. You have people to call when things are hard.</li>
+            <li>You're probably helping someone else who is new to the city find their feet.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section" id="closing">
+    <div class="section-num">08</div>
+    <h2>A Few Final Things</h2>
+    <p>Community is not found. It's built. And it's built slowly, through small, repeated acts of showing up. There's no shortcut, but there is a reliable path.</p>
+    <p>Melbourne is a genuinely good city for this. The infrastructure is there — Neighbourhood Houses, playgroups, community gardens, parks, markets, cafés. The culture is oriented toward belonging. You're not starting from nothing; you're plugging into something that already works.</p>
+    <p>Give yourself a year. Not to be fully settled — but to be honestly in the process of building something. By then, you'll know your neighborhood, you'll have faces you recognize and people who recognize you, and the city will have started to feel like home.</p>
+    <div class="callout callout-amber">You're not trying to replace what you had. You're building something new. That takes time, and it's worth it.</div>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <div class="back-top">
+    <button onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Back to top</button>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="guide-footer">
+  <div class="guide-footer-title">"The place to live."</div>
+  <p>City of Darebin's own description of itself — 140,000 people from 153 countries speaking 147 languages.</p>
+  <br>
+  <p>
+    <a href="https://nhvic.org.au">nhvic.org.au</a> · Neighbourhood Houses Victoria<br>
+    <a href="https://playgroupvictoria.com.au">playgroupvictoria.com.au</a> · Playgroups Victoria<br>
+    <a href="https://darebin.vic.gov.au">darebin.vic.gov.au</a> · City of Darebin
+  </p>
+</footer>
+
+<script>
+  function toggleToc() {
+    const toc = document.getElementById('toc');
+    const btn = document.getElementById('toc-btn');
+    toc.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
+
+  document.querySelectorAll('.toc a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.getElementById('toc').classList.remove('open');
+      document.getElementById('toc-btn').classList.remove('open');
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop || document.body.scrollTop;
+    const total = doc.scrollHeight - doc.clientHeight;
+    const pct = total ? (scrolled / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+</script>
+
+</body>
+</html>
