@@ -113,6 +113,20 @@ h2[id], h3[id]{ scroll-margin-top:96px; }
 .toc-link:active{ background:var(--green-light); color:var(--green); }
 .toc-link::after{ content:" ›"; color:var(--text-light); float:right; }
 
+/* nested sub-list under a TOC entry (Traps, Practical Tips) */
+.toc-sublist{
+  list-style:none; padding-left:18px; margin:0;
+  border-top:1px solid var(--border);
+  background:var(--cream-dark);
+}
+.toc-sublist li{ border-bottom:1px solid var(--border); }
+.toc-sublist li:last-child{ border-bottom:none; }
+.toc-sublist .toc-link{
+  font-size:15px; padding:11px 6px;
+  color:var(--text-mid);
+}
+.toc-sublist .toc-link::after{ content:""; }
+
 /* ── BLOCKQUOTES ── */
 blockquote{
   background:var(--cream-dark);
@@ -210,8 +224,27 @@ footer{
 <li><a class="toc-link" href="#guide/carbs" data-page="guide" data-target="carbs">A Note on Carbs — The Nuance Matters</a></li>
 <li><a class="toc-link" href="#guide/dont-drink-calories" data-page="guide" data-target="dont-drink-calories">Don't Drink Your Calories</a></li>
 <li><a class="toc-link" href="#guide/food-status" data-page="guide" data-target="food-status">A Note on Food and Status</a></li>
-<li><a class="toc-link" href="#guide/traps" data-page="guide" data-target="traps">The Traps — What's Working Against You Without You Knowing</a></li>
-<li><a class="toc-link" href="#guide/practical-tips" data-page="guide" data-target="practical-tips">Practical Tips</a></li>
+<li><a class="toc-link" href="#guide/traps" data-page="guide" data-target="traps">The Traps — What's Working Against You Without You Knowing</a>
+<ul class="toc-sublist">
+<li><a class="toc-link" href="#guide/trap-overhungry" data-page="guide" data-target="trap-overhungry">The Overhungry Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-healthy-halo" data-page="guide" data-target="trap-healthy-halo">The Healthy Halo Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-liquid-calories" data-page="guide" data-target="trap-liquid-calories">The Liquid Calories Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-americanization" data-page="guide" data-target="trap-americanization">The Americanization Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-reward" data-page="guide" data-target="trap-reward">The Reward Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-weekend" data-page="guide" data-target="trap-weekend">The Weekend Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-portion" data-page="guide" data-target="trap-portion">The Portion Distortion Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-all-or-nothing" data-page="guide" data-target="trap-all-or-nothing">The All-or-Nothing Trap</a></li>
+<li><a class="toc-link" href="#guide/trap-condiment" data-page="guide" data-target="trap-condiment">The Condiment Blindspot</a></li>
+<li><a class="toc-link" href="#guide/trap-oil" data-page="guide" data-target="trap-oil">The Cooking Oil Trap</a></li>
+</ul>
+</li>
+<li><a class="toc-link" href="#guide/practical-tips" data-page="guide" data-target="practical-tips">Practical Tips</a>
+<ul class="toc-sublist">
+<li><a class="toc-link" href="#guide/tip-getting-started" data-page="guide" data-target="tip-getting-started">Getting Started</a></li>
+<li><a class="toc-link" href="#guide/tip-daily-habits" data-page="guide" data-target="tip-daily-habits">Daily Habits</a></li>
+<li><a class="toc-link" href="#guide/tip-restaurants" data-page="guide" data-target="tip-restaurants">At Restaurants</a></li>
+</ul>
+</li>
 <li><a class="toc-link" href="#guide/first-week" data-page="guide" data-target="first-week">Your First Week — A Loose Guide</a></li>
 <li><a class="toc-link" href="#guide/how-to-know" data-page="guide" data-target="how-to-know">How to Know It's Working</a></li>
 <li><a class="toc-link" href="#guide/beyond-weight-loss" data-page="guide" data-target="beyond-weight-loss">Beyond Weight Loss — Why This Matters for Your Long Term Health</a></li>
@@ -741,24 +774,24 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <h2 id="traps">The Traps — What's Working Against You Without You Knowing</h2>
 <p><strong>None of these feel like traps while you're in them. They all have a completely convincing internal logic in the moment.</strong> That's what makes them traps rather than mistakes. Recognizing them by name removes their power.</p>
 <hr />
-<h3>The Overhungry Trap</h3>
+<h3 id="trap-overhungry">The Overhungry Trap</h3>
 <p><strong>Waiting too long to eat is one of the most common reasons people make poor food choices — and it has nothing to do with willpower.</strong></p>
 <p>When you get too hungry, cortisol and ghrelin (the hunger hormone) spike. At that point the brain's reward system genuinely overrides rational food choice. You stop choosing what you planned to eat and start choosing whatever will deliver fast reward — fat, sugar, and salt. It's neurochemistry, not weakness.</p>
 <p>The pattern looks like this: skipping a meal → powering through hunger → arriving ravenous → eating fast, eating dense, eating more than intended → feeling guilty → restricting the next day → repeat.</p>
 <p>The fix is prevention. A low-density snack buffer — fruit, raw vegetables, a cup of broth — in the window before you historically get overhungry prevents the spike before it happens. Eating this way, done well, means you're never hungry enough for that override to kick in.</p>
 <hr />
-<h3>The Healthy Halo Trap</h3>
+<h3 id="trap-healthy-halo">The Healthy Halo Trap</h3>
 <p><strong>Eating more of something because it's labeled healthy is one of the most common ways good intentions go sideways.</strong></p>
 <p>Granola, açaí bowls, trail mix, whole grain crackers, smoothies — all marketed as health foods but often extremely calorie dense. The label gives unconscious permission for larger portions. The food isn't the problem; the portion enabled by the halo is.</p>
 <hr />
-<h3>The Liquid Calories Trap</h3>
+<h3 id="trap-liquid-calories">The Liquid Calories Trap</h3>
 <p><strong>Drinks don't trigger the same satiety signals as food, so the brain dramatically undercounts them.</strong></p>
 <p>Juices, lattes, sports drinks, smoothies, alcohol — they add up fast and the brain essentially doesn't register them as eating. You can drink 500 calories and feel no fuller than before. The same 500 calories as food would have genuinely satisfied you.</p>
 <p><strong>Bubble tea is the most extreme example worth knowing about.</strong> A large milk tea with tapioca pearls typically runs 500 to 800 calories — with 60 to 90 grams of sugar, and sometimes a full day's worth of saturated fat. That's a meal's worth of calories in a cup, and it leaves you no fuller than before you drank it.</p>
 <p>It's deceptive in a specific way. Bubble tea <em>looks</em> light — it's mostly liquid and ice by weight, so by the numbers it can seem low density. That's a statistical illusion. The water and ice inflate the weight, but every one of those calories is still there, and none of the fullness is. The tapioca pearls make it worse — they're balls of starch cooked in sugar syrup sitting at the bottom of the cup, and they don't register as "food" the way a plate of rice would.</p>
 <p>If bubble tea is part of life — and it often is — the harm-reduction moves are real: most shops let you set the sugar level (ordering 25–50% instead of 100% cuts a lot), skipping the pearls and foam removes a big chunk, and a smaller size scales everything down. But the cleanest approach is the one in the next section.</p>
 <hr />
-<h3>The Americanization Trap</h3>
+<h3 id="trap-americanization">The Americanization Trap</h3>
 <p><strong>Many Asian dishes that appear healthy have been significantly altered for the American market in ways that dramatically increase calorie density.</strong></p>
 <p>Traditional pho is mostly broth — nearly zero calories per gram — with modest amounts of thin-sliced meat, rice noodles, and fresh herbs. American versions flip that ratio: more meat, more noodles, less herb, richer broth. A very different calorie proposition. The same transformation happens across nearly every Asian cuisine:</p>
 <ul>
@@ -771,33 +804,33 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p><strong>The common thread:</strong> portion sizes inflate, meat increases, vegetables decrease, frying replaces steaming, sauces get heavier and sweeter.</p>
 <p><strong>The practical rule:</strong> the closer a dish is to what you'd find in that country, the more likely it aligns with calorie density principles. Ask for sauces on the side, choose steamed over fried, and treat the meat as a supporting player.</p>
 <hr />
-<h3>The Reward Trap</h3>
+<h3 id="trap-reward">The Reward Trap</h3>
 <p><strong>"I worked out today so I deserve this" rarely works out mathematically.</strong></p>
 <p>Exercise consistently burns fewer calories than people think, and reward foods consistently contain more. The psychological logic feels airtight; the numbers almost never support it.</p>
 <hr />
-<h3>The Weekend Trap</h3>
+<h3 id="trap-weekend">The Weekend Trap</h3>
 <p><strong>Two days of loosening up can erase five days of progress.</strong></p>
 <p>This is especially common in people who feel they're "doing well" during the week. The weekday intention is real; the weekend accounting just doesn't get done. Consistency matters more than any single day's perfection — which leads directly to the next trap.</p>
 <hr />
-<h3>The Portion Distortion Trap</h3>
+<h3 id="trap-portion">The Portion Distortion Trap</h3>
 <p><strong>Eating the right foods but significantly underestimating quantities.</strong></p>
 <p>Especially common with moderate-density foods — nuts, olive oil, peanut butter, brown rice, pasta. People measure once, eyeball forever, and the eyeball drifts upward over time. The condiment-sized foods in the table are the main risk area.</p>
 <hr />
-<h3>The All-or-Nothing Trap</h3>
+<h3 id="trap-all-or-nothing">The All-or-Nothing Trap</h3>
 <p><strong>One imperfect meal triggering complete abandonment of the approach.</strong></p>
 <p>"I've already blown it" is one of the most costly thoughts in nutrition. There's no off plan here — it's a spectrum, not a rule set. One dense meal doesn't undo anything. The next meal is all that matters.</p>
 <hr />
-<h3>The Condiment Blindspot</h3>
+<h3 id="trap-condiment">The Condiment Blindspot</h3>
 <p><strong>Carefully choosing low-density foods then drowning them in high-density dressings and sauces.</strong></p>
 <p>A salad is a perfect calorie density meal until you add several hundred calories of ranch dressing. This is also how restaurant dishes and Americanized versions of Asian food get calorie-loaded — the base is fine, the sauce transforms it. Ask for dressings and sauces on the side and add sparingly.</p>
 <hr />
-<h3>The Cooking Oil Trap</h3>
+<h3 id="trap-oil">The Cooking Oil Trap</h3>
 <p><strong>Oil is the single densest food in existence — and it's invisible once it hits the pan.</strong></p>
 <p>At 8.84 cal/gram, oil is denser than butter, denser than nuts, denser than anything else on the table. Because it disappears into cooking, it's one of the easiest ways to add hundreds of calories to an otherwise excellent meal without realizing it. A stir-fry of vegetables and chicken is a great low-density meal. The same stir-fry made with four tablespoons of oil is a very different calorie proposition — and it tastes almost identical.</p>
 <p>Use the minimum amount needed, switch to a non-stick pan, or use a light spray instead of a pour. This single habit in the kitchen has an outsized impact on everything you cook at home.</p>
 <hr />
 <h2 id="practical-tips">Practical Tips</h2>
-<h3>Getting Started</h3>
+<h3 id="tip-getting-started">Getting Started</h3>
 <p><strong>Don't start by restricting — start by adding.</strong> Add a low-density starter to meals you already eat. A bowl of broth, a side salad, or sliced vegetables before your normal meal. Don't change the meal yet — just precede it with volume. This builds the habit without the psychological cost of losing anything.</p>
 <p><strong>Prioritize the highest-impact changes first.</strong> Not all swaps are equal, and trying to change everything at once leads to nothing changing. Focus on the moves that shift calorie density the most dramatically. Swapping beef for chicken is a much bigger change than swapping white rice for brown rice — the tables make this visible. Start with the swaps that move you across a zone boundary, not the ones that fine-tune within the same zone. Early wins build momentum.</p>
 <p><strong>Use substitution, not elimination.</strong> For every high-density food you eat regularly, find a lower-density version that satisfies the same craving. You don't give anything up — you replace it with something close enough that the meal still feels familiar. Creamy soup becomes broth-based soup. Ground beef becomes ground turkey or a beef-lentil mix. A heavy pasta sauce gets extended with extra vegetables. The dish stays recognizable; the calorie density quietly drops.</p>
@@ -806,7 +839,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p><strong>Identify your personal overhungry window.</strong> When do you consistently get too hungry? Mid-afternoon? After dinner? Plan a low-density snack specifically for that window before it happens.</p>
 <p><strong>Pick two protein anchors</strong> you enjoy and keep them always available. Anchor scarcity leads to poor improvised choices on busy nights.</p>
 <hr />
-<h3>Daily Habits</h3>
+<h3 id="tip-daily-habits">Daily Habits</h3>
 <p><strong>Start every meal with the lowest-density item first.</strong> Soup or salad before the denser elements. This is a traditional pattern in Japanese, Vietnamese, and French meals — it's not accidental. By the time the denser food arrives, satiety is already building.</p>
 <p><strong>Make low-density food delicious.</strong> The solution to eating more vegetables isn't discipline — it's flavor. Herbs, spices, citrus, and vinegar add enormous flavor at near-zero calorie cost. Fresh lime on fish or vegetables, a generous handful of fresh herbs, a vinegar-based dressing instead of a creamy one. The goal is food you want to eat, not food you tolerate.</p>
 <p><strong>Pre-commit your meals before you're hungry.</strong> Deciding what to eat in a moment of hunger is the worst possible time to make that decision. Choosing tomorrow's lunch tonight, or scanning a restaurant menu online before you arrive, moves the decision to a moment of clear thinking. Even a loose plan dramatically outperforms deciding in the moment.</p>
@@ -819,7 +852,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p><strong>One meal prep session per week.</strong> Pre-cooked protein and pre-cut vegetables removes the friction that drives bad decisions on busy nights. Keep legumes cooked and ready.</p>
 <p><strong>Use entrée dilution.</strong> Lower the calorie density of meals you already make by adding low-density ingredients invisibly. Extra vegetables stirred into pasta sauce. Pureed cauliflower blended into mashed potato. Spinach folded into scrambled eggs. Ground meat stretched with lentils or finely chopped mushrooms. The dish stays completely recognizable — the family doesn't notice — but the calorie density quietly drops.</p>
 <hr />
-<h3>At Restaurants</h3>
+<h3 id="tip-restaurants">At Restaurants</h3>
 <ul>
 <li>Scan the menu for the dish closest to its original cultural version</li>
 <li>Be cautious of anything described as crispy, creamy, loaded, smothered, or glazed</li>
