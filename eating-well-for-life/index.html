@@ -47,18 +47,22 @@ header{
   font-family:'Lora',serif; font-weight:700; font-size:17px;
   color:var(--green); text-align:center;
   padding:13px 16px 11px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
+.header-title:active{ opacity:0.6; }
 .tabs{
   display:flex; border-top:1px solid var(--border);
 }
 .tab{
   flex:1; background:none; border:none; cursor:pointer;
-  font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:600;
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
   color:var(--text-light);
-  padding:11px 4px 12px;
+  padding:11px 2px 12px;
   border-bottom:2.5px solid transparent;
   transition:color .15s,border-color .15s;
   min-height:44px;
+  white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
 }
 .tab.active{ color:var(--green); border-bottom-color:var(--green); }
@@ -86,6 +90,28 @@ hr{ border:none; border-top:1px solid var(--border); margin:34px 0; }
 
 /* first heading of a page sits tighter */
 .page > h1:first-child{ margin-top:4px; }
+
+/* scroll-offset so anchored jumps clear the sticky tab bar */
+h2[id], h3[id]{ scroll-margin-top:96px; }
+
+/* ── TABLE OF CONTENTS ── */
+.toc-section{ margin:30px 0 8px; }
+.toc-section:first-of-type{ margin-top:18px; }
+.toc-section h2{ margin-bottom:6px; }
+.toc-group{ margin-top:18px; }
+.toc-group h3{ margin:18px 0 4px; font-size:16px; color:var(--green-mid); }
+.toc-list{ list-style:none; padding-left:0; margin:0 0 6px; }
+.toc-list li{ margin:0; border-bottom:1px solid var(--border); }
+.toc-list li:last-child{ border-bottom:none; }
+.toc-link{
+  display:block; padding:13px 6px; min-height:44px;
+  color:var(--text); text-decoration:none;
+  font-family:'Lora',serif; font-size:17px; line-height:1.35;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .12s, background .12s;
+}
+.toc-link:active{ background:var(--green-light); color:var(--green); }
+.toc-link::after{ content:" ›"; color:var(--text-light); float:right; }
 
 /* ── BLOCKQUOTES ── */
 blockquote{
@@ -156,29 +182,130 @@ footer{
 <body>
 
 <header>
-  <div class="header-title">Eating Well for Life</div>
+  <div class="header-title" role="button" tabindex="0" aria-label="Back to top of guide">Eating Well for Life</div>
   <div class="tabs">
+    <button class="tab" data-page="contents">Contents</button>
     <button class="tab active" data-page="guide">Eating Well</button>
     <button class="tab" data-page="charts">Charts</button>
-    <button class="tab" data-page="meals">Sample Meals</button>
+    <button class="tab" data-page="meals">Meals</button>
     <button class="tab" data-page="reminders">Reminders</button>
   </div>
 </header>
 
 <main>
+  <div class="page" id="page-contents"><h1>Contents</h1>
+<p><em>Jump straight to any section.</em></p>
+
+<div class="toc-section">
+<h2>The Guide</h2>
+<ul class="toc-list">
+<li><a class="toc-link" href="#guide/whats-not" data-page="guide" data-target="whats-not">Let's Start With What This Is Not</a></li>
+<li><a class="toc-link" href="#guide/simple-idea" data-page="guide" data-target="simple-idea">What This Is — The Simple Idea</a></li>
+<li><a class="toc-link" href="#guide/calorie-density" data-page="guide" data-target="calorie-density">What Is Calorie Density?</a></li>
+<li><a class="toc-link" href="#guide/reading-the-label" data-page="guide" data-target="reading-the-label">Reading the Label — Calculating It Yourself</a></li>
+<li><a class="toc-link" href="#guide/plate-rule" data-page="guide" data-target="plate-rule">The Plate Rule</a></li>
+<li><a class="toc-link" href="#guide/foodie" data-page="guide" data-target="foodie">Advice for a Foodie</a></li>
+<li><a class="toc-link" href="#guide/short-term-fixes" data-page="guide" data-target="short-term-fixes">Why Short Term Fixes Don't Work</a></li>
+<li><a class="toc-link" href="#guide/protein" data-page="guide" data-target="protein">Protein — The Anchor</a></li>
+<li><a class="toc-link" href="#guide/carbs" data-page="guide" data-target="carbs">A Note on Carbs — The Nuance Matters</a></li>
+<li><a class="toc-link" href="#guide/dont-drink-calories" data-page="guide" data-target="dont-drink-calories">Don't Drink Your Calories</a></li>
+<li><a class="toc-link" href="#guide/food-status" data-page="guide" data-target="food-status">A Note on Food and Status</a></li>
+<li><a class="toc-link" href="#guide/traps" data-page="guide" data-target="traps">The Traps — What's Working Against You Without You Knowing</a></li>
+<li><a class="toc-link" href="#guide/practical-tips" data-page="guide" data-target="practical-tips">Practical Tips</a></li>
+<li><a class="toc-link" href="#guide/first-week" data-page="guide" data-target="first-week">Your First Week — A Loose Guide</a></li>
+<li><a class="toc-link" href="#guide/how-to-know" data-page="guide" data-target="how-to-know">How to Know It's Working</a></li>
+<li><a class="toc-link" href="#guide/beyond-weight-loss" data-page="guide" data-target="beyond-weight-loss">Beyond Weight Loss — Why This Matters for Your Long Term Health</a></li>
+<li><a class="toc-link" href="#guide/science" data-page="guide" data-target="science">The Science Behind This — And Where to Verify It</a></li>
+<li><a class="toc-link" href="#guide/mindset" data-page="guide" data-target="mindset">The Mindset to Carry Forward</a></li>
+</ul>
+</div>
+
+<div class="toc-section">
+<h2>Calorie Density Charts</h2>
+<ul class="toc-list">
+<li><a class="toc-link" href="#charts/chart-category" data-page="charts" data-target="chart-category">By Category</a></li>
+<li><a class="toc-link" href="#charts/chart-specific" data-page="charts" data-target="chart-specific">Specific Foods</a></li>
+<li><a class="toc-link" href="#charts/chart-starches" data-page="charts" data-target="chart-starches">Starches &amp; Grains</a></li>
+<li><a class="toc-link" href="#charts/chart-meat" data-page="charts" data-target="chart-meat">Meat &amp; Protein</a></li>
+<li><a class="toc-link" href="#charts/chart-fruit" data-page="charts" data-target="chart-fruit">Fruit</a></li>
+</ul>
+</div>
+
+<div class="toc-section">
+<h2>Sample Meals</h2>
+
+<div class="toc-group">
+<h3>Breakfast</h3>
+<ul class="toc-list">
+<li><a class="toc-link" href="#meals/meal-oatmeal" data-page="meals" data-target="meal-oatmeal">Oatmeal with fruit and Greek yogurt</a></li>
+<li><a class="toc-link" href="#meals/meal-scramble" data-page="meals" data-target="meal-scramble">Veggie scramble or omelet</a></li>
+<li><a class="toc-link" href="#meals/meal-yogurt-bowl" data-page="meals" data-target="meal-yogurt-bowl">Greek yogurt bowl</a></li>
+<li><a class="toc-link" href="#meals/meal-smoothie" data-page="meals" data-target="meal-smoothie">Smoothie, done thoughtfully</a></li>
+</ul>
+</div>
+
+<div class="toc-group">
+<h3>Lunch</h3>
+<ul class="toc-list">
+<li><a class="toc-link" href="#meals/meal-salad" data-page="meals" data-target="meal-salad">Big salad with a real protein anchor</a></li>
+<li><a class="toc-link" href="#meals/meal-soup-lunch" data-page="meals" data-target="meal-soup-lunch">Soup-based lunch</a></li>
+<li><a class="toc-link" href="#meals/meal-grain-bowl" data-page="meals" data-target="meal-grain-bowl">Grain bowl</a></li>
+<li><a class="toc-link" href="#meals/meal-sandwich" data-page="meals" data-target="meal-sandwich">Sandwich, done thoughtfully</a></li>
+<li><a class="toc-link" href="#meals/meal-leftovers" data-page="meals" data-target="meal-leftovers">Leftover dinner</a></li>
+<li><a class="toc-link" href="#meals/meal-spring-rolls" data-page="meals" data-target="meal-spring-rolls">Fresh spring rolls — the healthy variation</a></li>
+</ul>
+</div>
+
+<div class="toc-group">
+<h3>Dinner</h3>
+<ul class="toc-list">
+<li><a class="toc-link" href="#meals/meal-sheet-pan" data-page="meals" data-target="meal-sheet-pan">Sheet pan dinner</a></li>
+<li><a class="toc-link" href="#meals/meal-stir-fry" data-page="meals" data-target="meal-stir-fry">Stir-fry, done right</a></li>
+<li><a class="toc-link" href="#meals/meal-pasta" data-page="meals" data-target="meal-pasta">Pasta, rebalanced</a></li>
+<li><a class="toc-link" href="#meals/meal-tacos" data-page="meals" data-target="meal-tacos">Tacos or burrito bowls</a></li>
+<li><a class="toc-link" href="#meals/meal-soup-salad" data-page="meals" data-target="meal-soup-salad">Soup-and-salad dinner</a></li>
+<li><a class="toc-link" href="#meals/meal-grilled" data-page="meals" data-target="meal-grilled">Grilled protein with two vegetable sides</a></li>
+<li><a class="toc-link" href="#meals/meal-build-your-own" data-page="meals" data-target="meal-build-your-own">Build-your-own dinner nights</a></li>
+</ul>
+</div>
+
+<div class="toc-group">
+<h3>Snacks</h3>
+<ul class="toc-list">
+<li><a class="toc-link" href="#meals/meal-fruit" data-page="meals" data-target="meal-fruit">Fruit, simple</a></li>
+<li><a class="toc-link" href="#meals/meal-hummus" data-page="meals" data-target="meal-hummus">Raw vegetables with hummus</a></li>
+<li><a class="toc-link" href="#meals/meal-greek-yogurt" data-page="meals" data-target="meal-greek-yogurt">Greek yogurt</a></li>
+<li><a class="toc-link" href="#meals/meal-eggs" data-page="meals" data-target="meal-eggs">Hard-boiled eggs</a></li>
+<li><a class="toc-link" href="#meals/meal-edamame" data-page="meals" data-target="meal-edamame">Edamame</a></li>
+<li><a class="toc-link" href="#meals/meal-popcorn" data-page="meals" data-target="meal-popcorn">Popcorn</a></li>
+</ul>
+</div>
+
+<div class="toc-group">
+<h3>At Restaurants</h3>
+<ul class="toc-list">
+<li><a class="toc-link" href="#meals/rest-asian" data-page="meals" data-target="rest-asian">Asian restaurants</a></li>
+<li><a class="toc-link" href="#meals/rest-italian" data-page="meals" data-target="rest-italian">Italian</a></li>
+<li><a class="toc-link" href="#meals/rest-mexican" data-page="meals" data-target="rest-mexican">Mexican</a></li>
+<li><a class="toc-link" href="#meals/rest-american" data-page="meals" data-target="rest-american">American</a></li>
+</ul>
+</div>
+</div>
+</div>
+
   <div class="page active" id="page-guide"><h1>Eating Well for Life</h1>
 <h3>How to Feel Full, Lose Weight, and Stay Healthy — Without Giving Up the Foods You Love</h3>
 <hr />
 <p><em>Most approaches to weight loss ask you to eat less and suffer more. This one asks you to eat more and feel better — and the results are the same.</em></p>
 <hr />
-<h2>Let's Start With What This Is Not</h2>
+<h2 id="whats-not">Let's Start With What This Is Not</h2>
 <p>You've probably tried something like this before. You found something that worked for a few weeks, maybe a few months, and then it stopped — either because it was too hard to maintain, or life got in the way, or the results reversed the moment you relaxed. If that's your experience, you're not alone and you're not the problem. The approach was.</p>
 <p><strong>This is not a restrictive eating plan.</strong> Nothing is off limits. Not your favorite foods, not dessert, not a glass of wine, not a meal out. What changes is how you think about proportion, frequency, and what fills most of your plate — not what you're allowed to eat. If you love a particular food, it stays in your life. Full stop.</p>
 <p><strong>This is not about eating less.</strong> It's about eating more of the right things. If you finish a meal hungry, something is wrong with the meal — not with your willpower. The goal is a full plate, a satisfied stomach, and steady energy. Weight loss happens as a natural consequence of <em>what</em> fills that plate, not as the result of suffering through smaller portions.</p>
 <p><strong>This is not a short term fix.</strong> It's a way of eating you'll still be doing in five years without thinking about it — because it feels good, keeps you full, and doesn't require constant effort to maintain.</p>
 <p>That combination — no restriction, no hunger, no forbidden foods, sustainable results — is what makes this different from everything else you may have tried.</p>
 <hr />
-<h2>What This Is — The Simple Idea</h2>
+<h2 id="simple-idea">What This Is — The Simple Idea</h2>
 <p><strong>The whole approach comes down to two sentences.</strong></p>
 <p>Eat more of foods that fill you up without loading you with calories. Eat less of foods that load you with calories without filling you up. That's it. Everything else in this guide — the zones, the plate rule, the traps, the tips — is just elaboration on those two sentences.</p>
 <p>The reason this isn't obvious is that the food environment works against you. Ultra-processed foods are deliberately engineered to be high in calories and low in fullness — they're designed to keep you eating. Meanwhile the foods that genuinely satisfy — vegetables, legumes, broths, lean proteins — are often underrepresented on menus and in the culture's idea of what a satisfying meal looks like. So the first skill is simply learning to see which foods are which.</p>
@@ -187,7 +314,7 @@ footer{
 <p>The good news is that this approach makes hunger signals easier to read over time. When meals are high in volume and protein, you stay genuinely full for longer. The desperate, urgent hunger that drives poor decisions becomes less common. Hunger becomes something you notice calmly and address deliberately — rather than something that sneaks up and hijacks your choices.</p>
 <p><strong>Start here: eat when you're genuinely hungry, stop when you're satisfied — not stuffed.</strong> The rest of the guide shows you exactly what to put on the plate to make that possible.</p>
 <hr />
-<h2>What Is Calorie Density?</h2>
+<h2 id="calorie-density">What Is Calorie Density?</h2>
 <p><strong>Every food has a different number of calories per gram. That ratio — calorie density — determines how full you get per calorie consumed.</strong></p>
 <p>A head of lettuce and a handful of almonds might contain similar calories, but the lettuce weighs many times more. Your stomach responds to volume and weight — so eating the lettuce produces much more fullness for the same calorie cost.</p>
 <p>The core insight, backed by research from Penn State nutritionist Barbara Rolls, is that people tend to eat a similar <em>weight</em> of food each day regardless of how many calories that food contains. Shift the density down and you eat fewer calories without consciously restricting — because you're still full. You ate a lot. The calories just weren't there in the same quantity.</p>
@@ -516,7 +643,7 @@ footer{
 <hr />
 <p><img alt="Calorie Density by Food" src="chart-foods-v2.png" /></p>
 <hr />
-<h2>Reading the Label — Calculating It Yourself</h2>
+<h2 id="reading-the-label">Reading the Label — Calculating It Yourself</h2>
 <p><strong>The tables can't list every food. But you can work out the calorie density of anything with a nutrition label in about five seconds.</strong></p>
 <p>The formula is simple:</p>
 <blockquote>
@@ -529,7 +656,7 @@ footer{
 <p>Broccoli doesn't have a nutrition label. Neither does an apple, a sweet potato, a piece of fresh fish, a bag of dried lentils, an onion. The whole "eat freely" zone is mostly unlabeled food. Meanwhile the crackers, the granola bars, the chips, the frozen entrées — the things that come with a detailed label and a marketing claim on the front — are disproportionately the dense, easy-to-overeat foods.</p>
 <p>So the label calculation is a genuinely useful tool when you're standing in a store holding a packaged product. But the bigger signal is the label's mere existence. A cart full of food that needs no labels is usually a cart full of the right things.</p>
 <hr />
-<h2>The Plate Rule</h2>
+<h2 id="plate-rule">The Plate Rule</h2>
 <p><strong>This single visual habit does most of the work — no counting, no tracking, no measuring.</strong></p>
 <p>Every meal, look at your plate:</p>
 <ul>
@@ -539,7 +666,7 @@ footer{
 </ul>
 <p>A plate that's half greens and salad is ideal. A plate that mixes greens with some fresh fruit is completely fine. The goal is volume from low-density whole foods — and fruit qualifies. Apply this at home first, where you control portions, then at restaurants. It naturally shifts calorie density down, ensures protein is present, and keeps starch in proportion — all without a single number.</p>
 <hr />
-<h2>Advice for a Foodie</h2>
+<h2 id="foodie">Advice for a Foodie</h2>
 <p><strong>If food is part of who you are — if you love to eat, love meat, grew up in a family where the table was the center of everything — this section is for you specifically.</strong></p>
 <p>Nobody is asking you to give up meat. Nobody is asking you to give up your favorite foods, your family traditions, or the things that make eating meaningful to you. If that were the ask, this wouldn't be worth reading. Your love of food is not a problem to fix — it's actually an advantage, because people who genuinely care about what they eat respond to better food, not just more food.</p>
 <p><strong>Quality over quantity — a foodie already knows this.</strong>
@@ -556,7 +683,7 @@ These are deeply meat-forward techniques that extract maximum flavor from smalle
 The slow Sunday roast, the celebratory meal, the grandmother's recipe — none of those were about piling up as much meat as possible. They were about occasion, connection, craft, and love. That can stay exactly as it is. The problem has never been the food culture itself. It's the everyday habits that got normalized alongside it — the meat-heavy Tuesday dinner that nobody is really celebrating, the takeout that happens by default. The special stays special. The everyday just gets smarter.</p>
 <p><em>Loving meat and eating well are not in conflict. The question is never whether to eat meat — it's how to make it count more, not less. A smaller portion of something genuinely special, surrounded by food that's been cooked with the same care, is a better meal than a large portion of something ordinary. That's not a sacrifice. That's just eating well.</em></p>
 <hr />
-<h2>Why Short Term Fixes Don't Work</h2>
+<h2 id="short-term-fixes">Why Short Term Fixes Don't Work</h2>
 <p><strong>Understanding why quick fixes fail is the most important thing you can do before starting something that actually works.</strong></p>
 <p>The appeal of a short term fix is obvious. A clear set of rules, a defined period, a promised outcome. The problem is structural — these approaches are designed in ways that guarantee failure.</p>
 <p><strong>The restriction-rebound cycle.</strong> Aggressive calorie restriction triggers biological survival responses. Metabolism slows, hunger hormones spike, and the body actively fights the deficit. You lose weight initially, restriction becomes harder to sustain, and when you stop — the body, now primed to store — rebounds. Most people end up heavier than when they started. This is not a willpower failure. It's physiology doing exactly what it evolved to do.</p>
@@ -573,7 +700,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <hr />
 <p>A useful question to ask yourself at the start: <em>Am I doing this for an event, or for a life?</em> Event-based motivation evaporates the moment the event passes. Life-based motivation — feeling well, having energy, being healthy for your family — doesn't have an expiration date.</p>
 <hr />
-<h2>Protein — The Anchor</h2>
+<h2 id="protein">Protein — The Anchor</h2>
 <p><strong>Calorie density tells you how to fill your plate. Protein tells you what to anchor it to.</strong></p>
 <p>Protein is the most satiating macronutrient per calorie — it keeps you fuller longer than equivalent calories from carbohydrates or fat. It also preserves lean muscle during weight loss, which matters because muscle drives your resting metabolism. Without adequate protein, weight loss eats away at muscle alongside fat, leaving you lighter but weaker and metabolically slower.</p>
 <p>Think of every meal as having two components:</p>
@@ -583,7 +710,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 </ul>
 <p><strong>Best protein anchors by calorie density:</strong> Legumes (lentils, black beans, chickpeas) are the standout choice — simultaneously high in protein, high in fiber, and low in calorie density. They do double duty as both anchor and filler. Shrimp, chicken breast, tofu, eggs, and Greek yogurt are all excellent moderate-density anchors. Salmon and beef are higher density but nutrient-rich enough to be worth including in mindful portions.</p>
 <hr />
-<h2>A Note on Carbs — The Nuance Matters</h2>
+<h2 id="carbs">A Note on Carbs — The Nuance Matters</h2>
 <p><strong>"Carbs are bad" is one of the most damaging oversimplifications in popular nutrition.</strong></p>
 <p>The low-carb movement correctly identified that refined carbohydrates are a major driver of obesity and metabolic disease. But the conclusion got overgeneralized from "refined carbs are problematic" to "all carbs are bad" — and that's where it falls apart.</p>
 <p><strong>Whole food carbs are not the problem.</strong> Vegetables, legumes, whole grains, and fruit come packaged with fiber, which slows digestion, blunts blood sugar spikes, and feeds gut bacteria. Black beans, lentils, brown rice, sweet potato, oats — these are carbohydrates, and they're central to eating well.</p>
@@ -591,7 +718,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p>The simple rule: <strong>the more a carb looks like it came from the ground, the better. The more processing it went through to reach your plate, the more cautious to be.</strong></p>
 <p>The plate rule handles this naturally — a quarter plate of starch means whole grains in modest portions, which is exactly the right relationship with carbohydrates.</p>
 <hr />
-<h2>Don't Drink Your Calories</h2>
+<h2 id="dont-drink-calories">Don't Drink Your Calories</h2>
 <p><strong>This is the single simplest rule in the whole approach — and it removes an entire category of hidden calories in one decision.</strong></p>
 <p>Drinks are the easiest place to take in calories without noticing, because liquid calories don't make you full. A 500-calorie meal satisfies you. A 500-calorie drink doesn't — you finish it and you're as hungry as before, except now those calories are spent. Juice, soda, sweetened coffee drinks, bubble tea, alcohol, smoothies — they slip past the body's fullness signals entirely.</p>
 <p>So here's the simplifying rule: <strong>drinks are not where your calories come from.</strong></p>
@@ -603,7 +730,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p>The reason this rule is such good value is that the calories you drink are the easiest calories to cut — because they were never filling you up in the first place. You lose almost nothing by giving them up, and you remove a surprisingly large number of calories from your week. Most other changes in this guide involve a real tradeoff. This one barely does.</p>
 <p>One specific note worth repeating: <strong>don't drink your fruit.</strong> A whole orange is fiber, volume, water, and takes time to eat. Orange juice is the sugar with the fiber stripped out, and it's easy to drink three oranges' worth in thirty seconds without noticing. Whenever there's a choice between the whole fruit and the juice, the whole fruit wins.</p>
 <hr />
-<h2>A Note on Food and Status</h2>
+<h2 id="food-status">A Note on Food and Status</h2>
 <p><strong>One of the quietest obstacles to eating well is the cultural story we've absorbed about what certain foods say about us.</strong></p>
 <p>Without realizing it, most of us carry a hierarchy: steak is celebration, abundance, a sign of doing well. A big plate of meat is a reward. Vegetables are a side dish — supporting cast, never the point. Salad is what you eat when you're punishing yourself. Beans and lentils are budget food, peasant food, what you eat when you can't afford anything better.</p>
 <p>These associations are so embedded that people sometimes resist eating patterns not because the food tastes bad — but because of what eating that way feels like it says about them.</p>
@@ -611,7 +738,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p>The status hierarchy got it completely backwards. A plate stacked with meat isn't abundance — it's a calorie density problem. A bowl of lentils with vegetables and herbs isn't poverty — it's the meal that gets people to 90 in good health.</p>
 <p>Letting go of those associations isn't just a nice idea. For many people it's the actual obstacle between where they are and where they want to be.</p>
 <hr />
-<h2>The Traps — What's Working Against You Without You Knowing</h2>
+<h2 id="traps">The Traps — What's Working Against You Without You Knowing</h2>
 <p><strong>None of these feel like traps while you're in them. They all have a completely convincing internal logic in the moment.</strong> That's what makes them traps rather than mistakes. Recognizing them by name removes their power.</p>
 <hr />
 <h3>The Overhungry Trap</h3>
@@ -669,7 +796,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p>At 8.84 cal/gram, oil is denser than butter, denser than nuts, denser than anything else on the table. Because it disappears into cooking, it's one of the easiest ways to add hundreds of calories to an otherwise excellent meal without realizing it. A stir-fry of vegetables and chicken is a great low-density meal. The same stir-fry made with four tablespoons of oil is a very different calorie proposition — and it tastes almost identical.</p>
 <p>Use the minimum amount needed, switch to a non-stick pan, or use a light spray instead of a pour. This single habit in the kitchen has an outsized impact on everything you cook at home.</p>
 <hr />
-<h2>Practical Tips</h2>
+<h2 id="practical-tips">Practical Tips</h2>
 <h3>Getting Started</h3>
 <p><strong>Don't start by restricting — start by adding.</strong> Add a low-density starter to meals you already eat. A bowl of broth, a side salad, or sliced vegetables before your normal meal. Don't change the meal yet — just precede it with volume. This builds the habit without the psychological cost of losing anything.</p>
 <p><strong>Prioritize the highest-impact changes first.</strong> Not all swaps are equal, and trying to change everything at once leads to nothing changing. Focus on the moves that shift calorie density the most dramatically. Swapping beef for chicken is a much bigger change than swapping white rice for brown rice — the tables make this visible. Start with the swaps that move you across a zone boundary, not the ones that fine-tune within the same zone. Early wins build momentum.</p>
@@ -701,7 +828,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Apply the plate ratio rule visually to whatever arrives</li>
 </ul>
 <hr />
-<h2>Your First Week — A Loose Guide</h2>
+<h2 id="first-week">Your First Week — A Loose Guide</h2>
 <p><strong>You don't need to change everything at once. You just need to start somewhere that matters.</strong></p>
 <p><strong>Days 1–2: Awareness only.</strong> Don't change anything yet. Look at your meals and mentally note where the highest-density items are. Look at the tables. Just observe without judgment.</p>
 <p><strong>Days 3–4: Add before you subtract.</strong> Add one low-density element to your existing meals — a side of vegetables, a bowl of broth before dinner, fruit instead of a packaged snack. Don't remove anything yet.</p>
@@ -709,7 +836,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p><strong>Day 7: Design your defaults.</strong> Pick one breakfast and one lunch that you'll eat on repeat. Simple, low-density, satisfying. These become your "the usual" — the meals you don't have to think about.</p>
 <p>By the end of the first week you've built awareness, added volume, made one meaningful swap, and established two automatic meals. That's a genuine foundation, not a dramatic overhaul that collapses by week three.</p>
 <hr />
-<h2>How to Know It's Working</h2>
+<h2 id="how-to-know">How to Know It's Working</h2>
 <p><strong>Don't rely solely on the scale.</strong> It fluctuates daily based on water, sodium, and digestion and will mislead you constantly. Use a broader set of signals.</p>
 <p><strong>Weekly signals:</strong>
 - Getting overhungry less often — direct indicator the approach is working
@@ -727,7 +854,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 - Don't restrict further — eat smarter, not less</p>
 <p>The plateau of latent potential is real — progress often happens invisibly before it becomes visible. The habits are forming before the results appear. Keep going.</p>
 <hr />
-<h2>Beyond Weight Loss — Why This Matters for Your Long Term Health</h2>
+<h2 id="beyond-weight-loss">Beyond Weight Loss — Why This Matters for Your Long Term Health</h2>
 <p><strong>Weight loss is the first thing you'll notice. It isn't the most important benefit.</strong></p>
 <p><strong>Energy and physical activity.</strong> Whole foods and fiber create steady blood sugar rather than spikes and crashes. The afternoon energy slump most people experience is largely a refined carb and blood sugar story. Eating this way tends to produce more consistent energy throughout the day — and movement and good eating reinforce each other in a positive cycle.</p>
 <p><strong>Type 2 diabetes.</strong> High-refined-carb, calorie-dense eating drives insulin resistance over time. High-fiber, whole food eating is strongly protective against Type 2 diabetes and in many cases can reverse early-stage insulin resistance.</p>
@@ -740,7 +867,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <p><strong>The Blue Zones connection.</strong> The longest-lived populations on earth — Okinawa in Japan, Sardinia in Italy, Ikaria in Greece, Nicoya in Costa Rica, Loma Linda in California — eat in ways that map almost perfectly onto calorie density principles. Mostly plants, legumes as a staple, modest portions of meat, minimal processed food. They aren't following a plan. It's just how they eat.</p>
 <p>The real prize is arriving at 60, 70, 80 with energy, without metabolic disease, and without the chronic conditions that define so many people's later decades. <strong>You're not eating this way to lose weight and then stop. You're eating this way because it's simply how healthy humans eat. The weight loss is just the first thing you notice.</strong></p>
 <hr />
-<h2>The Science Behind This — And Where to Verify It</h2>
+<h2 id="science">The Science Behind This — And Where to Verify It</h2>
 <p><strong>You don't have to take this guide's word for any of it.</strong></p>
 <p>Everything in this approach traces back to peer-reviewed research, mostly going back decades. The framing here is warm and accessible, but the underlying ideas are not invented — they're the consensus that emerges when you read the actual nutrition science rather than the diet industry.</p>
 <p><strong>The calorie density framework itself</strong> comes from the work of <strong>Barbara Rolls</strong>, a professor at Penn State who has spent more than 30 years researching how the volume and density of food affects how much we eat. Her book <em>Volumetrics</em> is the direct source of most of what's in this guide. The core finding — that people tend to eat a similar weight of food daily regardless of calorie content, so lowering density lowers intake without conscious restriction — has been replicated repeatedly in controlled studies.</p>
@@ -759,7 +886,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 </ul>
 <p>If you read those three, you'll have heard the same core message from three completely different voices — which is exactly the point.</p>
 <hr />
-<h2>The Mindset to Carry Forward</h2>
+<h2 id="mindset">The Mindset to Carry Forward</h2>
 <p><strong>Frame this as adding abundance, not removing pleasure. That framing is everything.</strong></p>
 <p>You are not eating less. You are eating more of the right things. The plate looks fuller, not smaller. The meals are satisfying, not austere. Nothing is forbidden — everything is just understood differently.</p>
 <p>When a trap kicks in, treat it as information, not failure. These are predictable patterns that anyone falls into. Notice it, name it, and get back to the next meal. One slip changes nothing. A pattern changes everything — which means a single good meal after a bad one is already a recovery.</p>
@@ -771,19 +898,19 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <h1>Calorie Density Charts</h1>
 <p class="charts-intro">Every food has a number of calories per gram. Lower means more food for fewer calories &mdash; you stay full for less. Bars run from lowest density at the top to highest at the bottom. Green is under 1.0, yellow 1.0&ndash;2.0, orange 2.0&ndash;4.0, red 4.0 and above.</p>
 
-<h2>By Category</h2>
+<h2 id="chart-category">By Category</h2>
 <img class="chart" src="chart-categories-v2.png" alt="Calorie density by food category">
 
-<h2>Specific Foods</h2>
+<h2 id="chart-specific">Specific Foods</h2>
 <img class="chart" src="chart-foods-v2.png" alt="Calorie density of specific foods">
 
-<h2>Starches &amp; Grains</h2>
+<h2 id="chart-starches">Starches &amp; Grains</h2>
 <img class="chart" src="chart-starches-v2.png" alt="Calorie density of starches and grains">
 
-<h2>Meat &amp; Protein</h2>
+<h2 id="chart-meat">Meat &amp; Protein</h2>
 <img class="chart" src="chart-meat-v2.png" alt="Calorie density of meat and protein">
 
-<h2>Fruit</h2>
+<h2 id="chart-fruit">Fruit</h2>
 <img class="chart" src="chart-fruit-v2.png" alt="Calorie density of fruit">
 </div>
   <div class="page" id="page-meals"><h1>Sample Meals</h1>
@@ -804,8 +931,8 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>The plate rule applies everywhere — at home, at a restaurant, at a friend's house</li>
 </ul>
 <hr />
-<h2>Breakfast</h2>
-<h3>Oatmeal with fruit and Greek yogurt</h3>
+<h2 id="breakfast">Breakfast</h2>
+<h3 id="meal-oatmeal">Oatmeal with fruit and Greek yogurt</h3>
 <ul>
 <li>Rolled oats (not instant), cooked in water rather than milk</li>
 <li>Berries or sliced banana for sweetness instead of brown sugar</li>
@@ -813,7 +940,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Cinnamon for flavor at zero calorie cost</li>
 <li>A small measured sprinkle of nuts if desired — not poured</li>
 </ul>
-<h3>Veggie scramble or omelet</h3>
+<h3 id="meal-scramble">Veggie scramble or omelet</h3>
 <ul>
 <li>Eggs cooked in a non-stick pan with minimal or no oil</li>
 <li>Heavy on vegetables — spinach, peppers, tomato, mushrooms, onion</li>
@@ -821,7 +948,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Salsa instead of butter on the side</li>
 <li>Whole grain toast dry, or with a thin layer of avocado — not slathered</li>
 </ul>
-<h3>Greek yogurt bowl</h3>
+<h3 id="meal-yogurt-bowl">Greek yogurt bowl</h3>
 <ul>
 <li>Plain Greek yogurt, never flavored — flavored versions hide significant sugar</li>
 <li>Berries for sweetness</li>
@@ -829,7 +956,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Honey only if needed, and only a drizzle</li>
 <li>Skip granola or use a tiny sprinkle — it's very calorie-dense</li>
 </ul>
-<h3>Smoothie, done thoughtfully</h3>
+<h3 id="meal-smoothie">Smoothie, done thoughtfully</h3>
 <ul>
 <li>A full serving of vegetables (spinach, kale) — you won't taste them</li>
 <li>One serving of fruit, not three</li>
@@ -839,8 +966,8 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>A reminder: smoothies fall into the liquid calories trap — eating the whole foods is generally better</li>
 </ul>
 <hr />
-<h2>Lunch</h2>
-<h3>Big salad with a real protein anchor</h3>
+<h2 id="lunch">Lunch</h2>
+<h3 id="meal-salad">Big salad with a real protein anchor</h3>
 <ul>
 <li>Greens as the base — easily half the bowl</li>
 <li>Vegetables piled on — cucumber, tomato, peppers, carrots, onion</li>
@@ -849,7 +976,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Small handful of seeds or nuts for crunch if desired</li>
 <li>Skip croutons and cheese, or use sparingly for flavor</li>
 </ul>
-<h3>Soup-based lunch</h3>
+<h3 id="meal-soup-lunch">Soup-based lunch</h3>
 <ul>
 <li>Broth-based soup as the centerpiece — pho, minestrone, chicken and vegetable, lentil</li>
 <li>Avoid cream-based soups (chowder, bisque) — calorie-dense</li>
@@ -857,7 +984,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Salad alongside if still hungry</li>
 <li>Soup is a near-perfect calorie density food — high volume, low density</li>
 </ul>
-<h3>Grain bowl</h3>
+<h3 id="meal-grain-bowl">Grain bowl</h3>
 <ul>
 <li>Base of brown rice, quinoa, or farro — small portion, quarter of the bowl</li>
 <li>Roasted or raw vegetables — half the bowl</li>
@@ -865,7 +992,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Sauce on the side, used sparingly — lemon juice, soy sauce, salsa, or hummus instead of creamy dressings</li>
 <li>A few slices of avocado as accent, not base</li>
 </ul>
-<h3>Sandwich, done thoughtfully</h3>
+<h3 id="meal-sandwich">Sandwich, done thoughtfully</h3>
 <ul>
 <li>Whole grain bread, two thin slices, not the thickest available</li>
 <li>Lean protein: turkey, chicken breast, tuna (tuna mixed with mustard, not mayo)</li>
@@ -874,12 +1001,12 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Skip cheese or use one thin slice for flavor</li>
 <li>Avocado in moderation — a quarter, not half</li>
 </ul>
-<h3>Leftover dinner</h3>
+<h3 id="meal-leftovers">Leftover dinner</h3>
 <ul>
 <li>Often the best lunch — pre-portioned, already designed well</li>
 <li>Especially good if you planned dinner around the plate rule</li>
 </ul>
-<h3>Fresh spring rolls — the healthy variation</h3>
+<h3 id="meal-spring-rolls">Fresh spring rolls — the healthy variation</h3>
 <ul>
 <li><strong>Fresh, never fried.</strong> Rice paper wrappers filled with raw vegetables — completely different from deep-fried egg rolls, which are dense and oily</li>
 <li>Load them with lettuce, cucumber, shredded carrot, and a generous amount of fresh herbs (mint, cilantro, Thai basil)</li>
@@ -889,8 +1016,8 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>High volume, fresh, low density, genuinely satisfying — one of the best light meals there is</li>
 </ul>
 <hr />
-<h2>Dinner</h2>
-<h3>Sheet pan dinner</h3>
+<h2 id="dinner">Dinner</h2>
+<h3 id="meal-sheet-pan">Sheet pan dinner</h3>
 <ul>
 <li>Half the pan: vegetables (broccoli, peppers, zucchini, onion, carrots, brussels sprouts)</li>
 <li>Quarter: lean protein (chicken breast, shrimp, fish, tofu)</li>
@@ -898,7 +1025,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Sauce on the side, not poured before roasting</li>
 <li>A small portion of grain or potato alongside, not on the pan</li>
 </ul>
-<h3>Stir-fry, done right</h3>
+<h3 id="meal-stir-fry">Stir-fry, done right</h3>
 <ul>
 <li>Heavy on vegetables — multiple kinds, half the dish or more</li>
 <li>Modest amount of lean protein — chicken, shrimp, tofu, lean beef</li>
@@ -907,7 +1034,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Brown rice or cauliflower rice on the side, modest portion</li>
 <li>Skip pre-made stir-fry sauces (loaded with sugar and oil), or use a small spoonful</li>
 </ul>
-<h3>Pasta, rebalanced</h3>
+<h3 id="meal-pasta">Pasta, rebalanced</h3>
 <ul>
 <li>Half the plate is the sauce-and-vegetables, not the pasta</li>
 <li>Pasta becomes the supporting element, not the bulk</li>
@@ -916,7 +1043,7 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Parmesan as a finishing condiment, not a topping</li>
 <li>Skip cream-based sauces, or save them for occasional special meals</li>
 </ul>
-<h3>Tacos or burrito bowls</h3>
+<h3 id="meal-tacos">Tacos or burrito bowls</h3>
 <ul>
 <li>Skip the rice-heavy tortilla wrap or use a small one</li>
 <li>Bowl format works well — base of greens or beans, modest grain portion</li>
@@ -925,21 +1052,21 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Avocado in small amounts; sour cream skipped or replaced with Greek yogurt</li>
 <li>Salsa is a near-free flavor enhancer — load it up</li>
 </ul>
-<h3>Soup-and-salad dinner</h3>
+<h3 id="meal-soup-salad">Soup-and-salad dinner</h3>
 <ul>
 <li>A hearty broth-based soup (lentil, minestrone, chicken vegetable)</li>
 <li>Big side salad with vinaigrette</li>
 <li>Whole grain bread on the side if desired</li>
 <li>Surprisingly satisfying and very low calorie density</li>
 </ul>
-<h3>Grilled protein with two vegetable sides</h3>
+<h3 id="meal-grilled">Grilled protein with two vegetable sides</h3>
 <ul>
 <li>Lean protein the size of your palm — chicken, fish, lean steak</li>
 <li>One starchy vegetable side (sweet potato, small portion of rice)</li>
 <li>One non-starchy vegetable side, generous portion</li>
 <li>Lemon, herbs, vinegar, mustard for sauces — skip butter and cream sauces</li>
 </ul>
-<h3>Build-your-own dinner nights</h3>
+<h3 id="meal-build-your-own">Build-your-own dinner nights</h3>
 <ul>
 <li>Lay out components: protein, base (rice, lettuce, tortillas), vegetables, sauces, toppings</li>
 <li>Each person assembles their own with kid-friendly options</li>
@@ -947,69 +1074,69 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 <li>Great for variety and reducing the "what's for dinner" decision fatigue</li>
 </ul>
 <hr />
-<h2>Snacks</h2>
-<h3>Fruit, simple</h3>
+<h2 id="snacks">Snacks</h2>
+<h3 id="meal-fruit">Fruit, simple</h3>
 <ul>
 <li>Apple, orange, banana, berries, grapes — single serving</li>
 <li>Skip the dried versions, which are calorie-dense</li>
 </ul>
-<h3>Raw vegetables with hummus</h3>
+<h3 id="meal-hummus">Raw vegetables with hummus</h3>
 <ul>
 <li>Carrots, cucumber, bell pepper, cherry tomatoes</li>
 <li>A measured spoonful of hummus, not unlimited dipping</li>
 </ul>
-<h3>Greek yogurt</h3>
+<h3 id="meal-greek-yogurt">Greek yogurt</h3>
 <ul>
 <li>Plain, not flavored</li>
 <li>Add fresh fruit for sweetness</li>
 </ul>
-<h3>Hard-boiled eggs</h3>
+<h3 id="meal-eggs">Hard-boiled eggs</h3>
 <ul>
 <li>Pre-cooked batch in the fridge</li>
 <li>Filling, high protein, low effort</li>
 </ul>
-<h3>Edamame</h3>
+<h3 id="meal-edamame">Edamame</h3>
 <ul>
 <li>Steamed, lightly salted</li>
 <li>High volume, high protein, low density</li>
 </ul>
-<h3>Popcorn</h3>
+<h3 id="meal-popcorn">Popcorn</h3>
 <ul>
 <li>Air-popped, not microwave or movie-style</li>
 <li>Volume snack — very satisfying</li>
 <li>Skip butter, use seasonings (nutritional yeast, paprika, garlic powder)</li>
 </ul>
 <hr />
-<h2>At Restaurants</h2>
-<h3>Asian restaurants</h3>
+<h2 id="restaurants">At Restaurants</h2>
+<h3 id="rest-asian">Asian restaurants</h3>
 <ul>
 <li>Pho or other broth-based noodle soup is the gold standard</li>
 <li>Steamed dumplings instead of fried</li>
 <li>Vegetable-heavy stir-fries, sauce on the side</li>
 <li>Sashimi rather than rolls loaded with cream cheese and mayo</li>
 </ul>
-<h3>Italian</h3>
+<h3 id="rest-italian">Italian</h3>
 <ul>
 <li>Tomato-based pasta sauces over cream-based</li>
 <li>Grilled fish or chicken with vegetables as the main, pasta as the side</li>
 <li>Insalata mista to start</li>
 <li>Skip the bread basket — it's never the meal you remember</li>
 </ul>
-<h3>Mexican</h3>
+<h3 id="rest-mexican">Mexican</h3>
 <ul>
 <li>Fajitas (vegetables and protein, skip the cheese-and-sour-cream pile)</li>
 <li>Grilled fish tacos</li>
 <li>Bowls over burritos</li>
 <li>Salsa is unlimited; queso and sour cream are not</li>
 </ul>
-<h3>American</h3>
+<h3 id="rest-american">American</h3>
 <ul>
 <li>Burger without the bun, or with half the bun, vegetables piled on</li>
 <li>Grilled chicken sandwich, mustard not mayo</li>
 <li>Salads with grilled protein, dressing on the side</li>
 </ul>
 <hr />
-<h2>The Condiment Swap Cheat Sheet</h2>
+<h2 id="condiment-swap">The Condiment Swap Cheat Sheet</h2>
 <p>These are the small choices, made consistently, that change calorie loads invisibly:</p>
 <div class="table-scroll"><table>
 <thead>
@@ -1231,18 +1358,91 @@ The slow Sunday roast, the celebratory meal, the grandmother's recipe — none o
 (function(){
   var tabs = document.querySelectorAll('.tab');
   var pages = document.querySelectorAll('.page');
-  function show(name){
+  var PAGES = ['contents','guide','charts','meals','reminders'];
+  var DEFAULT_PAGE = 'guide';
+
+  // We manage scroll restoration ourselves.
+  if('scrollRestoration' in history){ history.scrollRestoration = 'manual'; }
+
+  function setActive(name){
     pages.forEach(function(p){ p.classList.toggle('active', p.id === 'page-'+name); });
     tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.page === name); });
-    window.scrollTo(0,0);
-    try{ history.replaceState(null,'','#'+name); }catch(e){}
   }
+
+  function scrollToTarget(targetId){
+    var el = document.getElementById(targetId);
+    if(!el) return;
+    var header = document.querySelector('header');
+    var headerH = header ? header.offsetHeight : 0;
+    var top = el.getBoundingClientRect().top + window.scrollY - headerH - 12;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+  }
+
+  function apply(name, targetId){
+    setActive(name);
+    if(targetId){
+      requestAnimationFrame(function(){ scrollToTarget(targetId); });
+    } else {
+      window.scrollTo(0,0);
+    }
+  }
+
+  function navigate(name, targetId){
+    var hash = '#' + name + (targetId ? '/' + targetId : '');
+    if(location.hash === hash){
+      // Same destination — just re-apply (e.g. tapping active tab scrolls to top).
+      apply(name, targetId);
+      return;
+    }
+    apply(name, targetId);
+    try{ history.pushState({ name: name, target: targetId }, '', hash); }catch(e){}
+  }
+
+  function parseHash(h){
+    h = (h || '').replace('#','');
+    if(!h) return null;
+    var parts = h.split('/');
+    var pageName = parts[0];
+    var targetId = parts[1] || null;
+    if(PAGES.indexOf(pageName) === -1) return null;
+    return { name: pageName, target: targetId };
+  }
+
   tabs.forEach(function(t){
-    t.addEventListener('click', function(){ show(t.dataset.page); });
+    t.addEventListener('click', function(){ navigate(t.dataset.page, null); });
   });
-  // open to hash if present
-  var h = (location.hash||'').replace('#','');
-  if(['guide','charts','meals','reminders'].indexOf(h) !== -1){ show(h); }
+
+  var headerTitle = document.querySelector('.header-title');
+  if(headerTitle){
+    headerTitle.addEventListener('click', function(){ navigate('guide', null); });
+    headerTitle.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); navigate('guide', null); }
+    });
+  }
+
+  document.querySelectorAll('.toc-link').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      navigate(a.dataset.page, a.dataset.target);
+    });
+  });
+
+  window.addEventListener('popstate', function(){
+    var parsed = parseHash(location.hash);
+    if(parsed){
+      apply(parsed.name, parsed.target);
+    } else {
+      // Back to the no-hash entry point — restore default landing.
+      apply(DEFAULT_PAGE, null);
+    }
+  });
+
+  // Initial load: honour a deep-link hash, but don't add a history entry for it.
+  var initial = parseHash(location.hash);
+  if(initial){
+    apply(initial.name, initial.target);
+    try{ history.replaceState({ name: initial.name, target: initial.target }, '', location.hash); }catch(e){}
+  }
 })();
 </script>
 
