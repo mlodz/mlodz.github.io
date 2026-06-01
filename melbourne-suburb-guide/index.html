@@ -33,9 +33,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .nav-btn svg{width:22px;height:22px;}
 /* page header */
 .page-header{background:var(--navy);color:#fff;padding:52px 20px 20px;position:sticky;top:0;z-index:10;}
-.home-link{position:fixed;top:12px;left:50%;transform:translateX(calc(-50% - 200px));z-index:20;display:inline-flex;align-items:center;gap:5px;padding:5px 12px 5px 10px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .15s;}
-.home-link:hover{background:rgba(255,255,255,.24);}
-@media (max-width:540px){.home-link{left:12px;transform:none;}}
 .page-header h1{font-family:'Playfair Display',serif;font-size:22px;}
 .page-header p{font-size:13px;opacity:.7;margin-top:3px;}
 /* search */
@@ -155,7 +152,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 </style>
 </head>
 <body>
-<a class="home-link" href="../index.html" aria-label="Back to home">&larr; Home</a>
 <div id="app">
 
   <div id="page-home" class="page active">
