@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Going Metric — An American's Guide to Australian Units</title>
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Metric">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a5c4c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --teal:#1a5c4c;
+  --teal-dark:#0f3d32;
+  --teal-light:#e6f3f0;
+  --teal-mid:#2a8a73;
+  --amber:#d4940a;
+  --amber-light:#fef7e6;
+  --bg:#f4f7f6;
+  --surface:#fff;
+  --text:#1a2a25;
+  --text-mid:#3d5a50;
+  --text-light:#6b8a7f;
+  --border:#d4ddd9;
+  --border-light:#e8efec;
+  --radius:12px;
+}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text-mid);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100dvh;
+}
+
+/* Hero */
+.hero{
+  background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 60%,var(--teal-mid) 100%);
+  color:#fff;
+  padding:60px 20px 24px;
+  text-align:center;
+}
+.hero h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(28px,6vw,40px);
+  font-weight:400;
+  line-height:1.2;
+  margin-bottom:8px;
+}
+.hero p{
+  font-size:15px;
+  opacity:0.75;
+  max-width:360px;
+  margin:0 auto;
+}
+
+/* Tabs */
+.tab-bar{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:var(--surface);
+  border-bottom:1.5px solid var(--border);
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-list{
+  display:flex;
+  min-width:max-content;
+  padding:0 12px;
+}
+.tab-btn{
+  flex-shrink:0;
+  background:none;
+  border:none;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:500;
+  color:var(--text-light);
+  padding:14px 14px 12px;
+  cursor:pointer;
+  border-bottom:2.5px solid transparent;
+  transition:color 0.2s,border-color 0.2s;
+  white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{
+  color:var(--teal);
+  border-bottom-color:var(--teal);
+  font-weight:600;
+}
+
+/* Content area */
+.content{
+  max-width:600px;
+  margin:0 auto;
+  padding:0 16px 80px;
+}
+.tab-panel{display:none;padding-top:20px;}
+.tab-panel.active{display:block;}
+
+/* Section headings */
+.section-title{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;
+  font-weight:400;
+  color:var(--text);
+  margin:28px 0 6px;
+}
+.section-title:first-child{margin-top:4px;}
+.section-sub{
+  font-size:13px;
+  color:var(--text-light);
+  margin-bottom:16px;
+}
+
+/* Tables */
+.table-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin-bottom:24px;
+  border-radius:var(--radius);
+  border:1.5px solid var(--border);
+  background:var(--surface);
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+thead th{
+  text-align:left;
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-light);
+  background:var(--teal-light);
+  padding:10px 14px;
+  border-bottom:1.5px solid var(--border);
+  white-space:nowrap;
+}
+thead th:first-child{border-radius:var(--radius) 0 0 0;}
+thead th:last-child{border-radius:0 var(--radius) 0 0;}
+thead th.r{text-align:right;}
+td{
+  padding:10px 14px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:top;
+}
+tr:last-child td{border-bottom:none;}
+td.r{text-align:right;font-variant-numeric:tabular-nums;}
+td.metric{
+  font-weight:600;
+  color:var(--teal);
+  white-space:nowrap;
+}
+td.imperial{
+  color:var(--text-light);
+  white-space:nowrap;
+}
+td.benchmark{color:var(--text-mid);}
+tr.anchor td{background:var(--amber-light);}
+
+/* Tip boxes */
+.tips{
+  background:var(--amber-light);
+  border:1.5px solid #e8d5a0;
+  border-radius:var(--radius);
+  padding:16px 18px;
+  margin-bottom:24px;
+}
+.tips-title{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--amber);
+  margin-bottom:10px;
+}
+.tips ul{
+  list-style:none;
+  padding:0;
+}
+.tips li{
+  font-size:13.5px;
+  line-height:1.55;
+  color:var(--text-mid);
+  padding:4px 0;
+}
+.tips li+li{border-top:1px solid #f0e4c4;}
+.tips strong{color:var(--text);}
+
+/* Slang table special styling */
+.slang-row td:nth-child(2){
+  font-weight:600;
+  color:var(--teal);
+}
+
+/* Formats section comparison tables */
+.compare-note{
+  font-size:13px;
+  color:var(--text-light);
+  background:var(--teal-light);
+  border-radius:8px;
+  padding:12px 16px;
+  margin-bottom:24px;
+  line-height:1.5;
+}
+.compare-note strong{color:var(--text);}
+
+/* Divider */
+.divider{
+  border:none;
+  border-top:1.5px solid var(--border);
+  margin:32px 0;
+}
+
+@media(min-width:500px){
+  .tab-btn{font-size:14px;padding:14px 18px 12px;}
+  table{font-size:14.5px;}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Going Metric</h1>
+  <p>An American's cheat sheet for thinking in Australian units</p>
+</header>
+
+<nav class="tab-bar" role="tablist">
+  <div class="tab-list">
+    <button class="tab-btn active" role="tab" data-tab="temp">Temperature</button>
+    <button class="tab-btn" role="tab" data-tab="distance">Distance</button>
+    <button class="tab-btn" role="tab" data-tab="weight">Weight &amp; Volume</button>
+    <button class="tab-btn" role="tab" data-tab="shoes">Shoes</button>
+    <button class="tab-btn" role="tab" data-tab="formats">Formats</button>
+    <button class="tab-btn" role="tab" data-tab="slang">Slang</button>
+  </div>
+</nav>
+
+<main class="content">
+
+<!-- ===================== TEMPERATURE ===================== -->
+<section class="tab-panel active" id="temp" role="tabpanel">
+
+  <h2 class="section-title">Everyday Benchmarks</h2>
+  <p class="section-sub">What does 25&deg;C actually feel like?</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">&deg;C</th><th>Benchmark</th><th class="r">&deg;F</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">-18</td><td class="benchmark">Bitter cold &mdash; dangerously cold</td><td class="r imperial">0</td></tr>
+        <tr><td class="r metric">-10</td><td class="benchmark">Brutal winter day</td><td class="r imperial">14</td></tr>
+        <tr class="anchor"><td class="r metric">0</td><td class="benchmark"><strong>Freezing point</strong></td><td class="r imperial">32</td></tr>
+        <tr><td class="r metric">4</td><td class="benchmark">Fridge temp / beer serving temp</td><td class="r imperial">39</td></tr>
+        <tr><td class="r metric">10</td><td class="benchmark">Cool fall day, light jacket</td><td class="r imperial">50</td></tr>
+        <tr><td class="r metric">12</td><td class="benchmark">&ldquo;Need a coat?&rdquo; threshold</td><td class="r imperial">54</td></tr>
+        <tr><td class="r metric">15</td><td class="benchmark">Mild &mdash; jeans and a sweater</td><td class="r imperial">59</td></tr>
+        <tr class="anchor"><td class="r metric">20</td><td class="benchmark"><strong>Comfortable room temperature</strong></td><td class="r imperial">68</td></tr>
+        <tr><td class="r metric">25</td><td class="benchmark">Warm, pleasant day</td><td class="r imperial">77</td></tr>
+        <tr><td class="r metric">27</td><td class="benchmark">Pool water</td><td class="r imperial">80</td></tr>
+        <tr><td class="r metric">30</td><td class="benchmark">Hot summer day</td><td class="r imperial">86</td></tr>
+        <tr><td class="r metric">35</td><td class="benchmark">Oppressively hot</td><td class="r imperial">95</td></tr>
+        <tr class="anchor"><td class="r metric">37</td><td class="benchmark"><strong>Body temperature</strong></td><td class="r imperial">98.6</td></tr>
+        <tr><td class="r metric">40</td><td class="benchmark">Dangerously hot / high fever</td><td class="r imperial">104</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Baking Temperatures</h2>
+  <p class="section-sub">Australian ovens and recipes use &deg;C</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">&deg;C</th><th>Benchmark</th><th class="r">&deg;F</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">120</td><td class="benchmark">Low &amp; slow (dehydrating, meringues)</td><td class="r imperial">250</td></tr>
+        <tr><td class="r metric">150</td><td class="benchmark">Slow roast / cheesecake</td><td class="r imperial">300</td></tr>
+        <tr><td class="r metric">160</td><td class="benchmark">Slow-roast pulled pork</td><td class="r imperial">325</td></tr>
+        <tr class="anchor"><td class="r metric">180</td><td class="benchmark"><strong>Standard baking</strong> (cakes, cookies, casseroles)</td><td class="r imperial">350</td></tr>
+        <tr><td class="r metric">190</td><td class="benchmark">Banana bread, muffins</td><td class="r imperial">375</td></tr>
+        <tr><td class="r metric">200</td><td class="benchmark">Roast chicken, vegetables</td><td class="r imperial">400</td></tr>
+        <tr><td class="r metric">220</td><td class="benchmark">Pizza, high-heat roasting</td><td class="r imperial">425</td></tr>
+        <tr><td class="r metric">230</td><td class="benchmark">Crusty bread</td><td class="r imperial">450</td></tr>
+        <tr><td class="r metric">260</td><td class="benchmark">Broil / Neapolitan pizza</td><td class="r imperial">500</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tips">
+    <div class="tips-title">Mental Shortcuts</div>
+    <ul>
+      <li><strong>&ldquo;Double and add 30&rdquo;</strong> &mdash; quick C&rarr;F for everyday temps. 20&deg;C &rarr; 40+30 = 70&deg;F (actual 68). Good enough from 0&ndash;35&deg;C.</li>
+      <li><strong>Three anchors:</strong> 0 = freezing, 20 = room temp, 37 = body temp.</li>
+      <li><strong>Each 1&deg;C &asymp; 2&deg;F</strong> &mdash; a 5&deg; swing in Celsius feels like 10&deg; in Fahrenheit.</li>
+      <li><strong>Baking anchor:</strong> 180&deg;C = 350&deg;F &mdash; the most common oven setting. Go up/down by 10&deg;C for each ~25&deg;F step.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== DISTANCE ===================== -->
+<section class="tab-panel" id="distance" role="tabpanel">
+
+  <h2 class="section-title">Everyday Distances</h2>
+  <p class="section-sub">Getting a feel for centimeters and meters</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">Metric</th><th>Benchmark</th><th>Imperial</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">1 cm</td><td class="benchmark">Width of a pencil</td><td class="imperial">~&#8540; inch</td></tr>
+        <tr class="anchor"><td class="r metric">2.5 cm</td><td class="benchmark"><strong>1 inch exactly</strong></td><td class="imperial">1 inch</td></tr>
+        <tr><td class="r metric">10 cm</td><td class="benchmark">Width of a fist</td><td class="imperial">~4 inches</td></tr>
+        <tr><td class="r metric">30 cm</td><td class="benchmark">Roughly a ruler / foot-long sub</td><td class="imperial">~1 foot</td></tr>
+        <tr><td class="r metric">1 m</td><td class="benchmark">One big step / kitchen counter height</td><td class="imperial">3 ft 3 in</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Walking &amp; Driving</h2>
+  <p class="section-sub">How far is a kilometer, really?</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">Metric</th><th>Benchmark</th><th>Imperial</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">400 m</td><td class="benchmark">Once around a track</td><td class="imperial">&frac14; mile</td></tr>
+        <tr class="anchor"><td class="r metric">800 m</td><td class="benchmark"><strong>~10 minute walk</strong></td><td class="imperial">&frac12; mile</td></tr>
+        <tr><td class="r metric">1 km</td><td class="benchmark">~12 minute walk</td><td class="imperial">0.6 miles</td></tr>
+        <tr class="anchor"><td class="r metric">1.6 km</td><td class="benchmark"><strong>1 mile exactly</strong></td><td class="imperial">1 mile</td></tr>
+        <tr><td class="r metric">5 km</td><td class="benchmark">Casual run / parkrun</td><td class="imperial">3.1 miles</td></tr>
+        <tr><td class="r metric">10 km</td><td class="benchmark">~2 hour walk / quick bike ride</td><td class="imperial">6.2 miles</td></tr>
+        <tr><td class="r metric">42 km</td><td class="benchmark">Marathon</td><td class="imperial">26.2 miles</td></tr>
+        <tr><td class="r metric">100 km</td><td class="benchmark">~1 hour highway drive</td><td class="imperial">62 miles</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Body Height</h2>
+  <p class="section-sub">Australians use centimeters &mdash; &ldquo;I&rsquo;m 175&rdquo;</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">cm</th><th>Benchmark</th><th>ft/in</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">152</td><td class="benchmark">Short (women)</td><td class="imperial">5&prime;0&Prime;</td></tr>
+        <tr><td class="r metric">160</td><td class="benchmark">Average woman (Aus)</td><td class="imperial">5&prime;3&Prime;</td></tr>
+        <tr><td class="r metric">165</td><td class="benchmark"></td><td class="imperial">5&prime;5&Prime;</td></tr>
+        <tr><td class="r metric">170</td><td class="benchmark">Tall woman / short man</td><td class="imperial">5&prime;7&Prime;</td></tr>
+        <tr><td class="r metric">175</td><td class="benchmark">Average man (Aus)</td><td class="imperial">5&prime;9&Prime;</td></tr>
+        <tr><td class="r metric">180</td><td class="benchmark">Tall</td><td class="imperial">5&prime;11&Prime;</td></tr>
+        <tr class="anchor"><td class="r metric">183</td><td class="benchmark"><strong>6 feet exactly</strong></td><td class="imperial">6&prime;0&Prime;</td></tr>
+        <tr><td class="r metric">188</td><td class="benchmark">Very tall</td><td class="imperial">6&prime;2&Prime;</td></tr>
+        <tr><td class="r metric">193</td><td class="benchmark">Basketball tall</td><td class="imperial">6&prime;4&Prime;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Speed</h2>
+  <p class="section-sub">Road signs are in km/h</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">km/h</th><th>Benchmark</th><th class="r">mph</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">40</td><td class="benchmark">School zone</td><td class="r imperial">25</td></tr>
+        <tr><td class="r metric">50</td><td class="benchmark">City streets</td><td class="r imperial">31</td></tr>
+        <tr><td class="r metric">60</td><td class="benchmark">Suburban roads</td><td class="r imperial">37</td></tr>
+        <tr><td class="r metric">80</td><td class="benchmark">Secondary highways</td><td class="r imperial">50</td></tr>
+        <tr class="anchor"><td class="r metric">100</td><td class="benchmark"><strong>Highway / freeway</strong></td><td class="r imperial">62</td></tr>
+        <tr><td class="r metric">110</td><td class="benchmark">Fast freeway</td><td class="r imperial">68</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tips">
+    <div class="tips-title">Mental Shortcuts</div>
+    <ul>
+      <li><strong>Km to miles:</strong> multiply by 0.6 (or divide by 1.6). 10 km &asymp; 6 miles.</li>
+      <li><strong>Cm to feet:</strong> 30 cm &asymp; 1 foot. For height, 152 cm = 5&prime;0&Prime; then add ~2.5 cm per inch.</li>
+      <li><strong>Km/h to mph:</strong> drop 40%. 100 km/h &rarr; 60 mph.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== WEIGHT & VOLUME ===================== -->
+<section class="tab-panel" id="weight" role="tabpanel">
+
+  <h2 class="section-title">Everyday Weights</h2>
+  <p class="section-sub">Grocery shopping, cooking, luggage</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">Metric</th><th>Benchmark</th><th>Imperial</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">5 g</td><td class="benchmark">A teaspoon of sugar</td><td class="imperial">~0.2 oz</td></tr>
+        <tr class="anchor"><td class="r metric">28 g</td><td class="benchmark"><strong>1 ounce exactly</strong></td><td class="imperial">1 oz</td></tr>
+        <tr><td class="r metric">100 g</td><td class="benchmark">A deck of cards / small apple</td><td class="imperial">3.5 oz</td></tr>
+        <tr><td class="r metric">200 g</td><td class="benchmark">A steak at the butcher</td><td class="imperial">7 oz</td></tr>
+        <tr><td class="r metric">250 g</td><td class="benchmark">Half a pound (close enough)</td><td class="imperial">8.8 oz</td></tr>
+        <tr class="anchor"><td class="r metric">454 g</td><td class="benchmark"><strong>1 pound exactly</strong></td><td class="imperial">1 lb</td></tr>
+        <tr><td class="r metric">500 g</td><td class="benchmark">Standard pack of mince / pasta</td><td class="imperial">1.1 lbs</td></tr>
+        <tr class="anchor"><td class="r metric">1 kg</td><td class="benchmark"><strong>A bag of sugar / a litre of water</strong></td><td class="imperial">2.2 lbs</td></tr>
+        <tr><td class="r metric">2 kg</td><td class="benchmark">A rack of ribs</td><td class="imperial">4.4 lbs</td></tr>
+        <tr><td class="r metric">5 kg</td><td class="benchmark">A bag of potatoes</td><td class="imperial">11 lbs</td></tr>
+        <tr><td class="r metric">7 kg</td><td class="benchmark">Airline carry-on limit (some airlines)</td><td class="imperial">15 lbs</td></tr>
+        <tr><td class="r metric">23 kg</td><td class="benchmark">Standard checked bag limit</td><td class="imperial">50 lbs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Body Weight</h2>
+  <p class="section-sub">Scales, gyms, and doctors all use kg</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">kg</th><th>Benchmark</th><th class="r">lbs</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">45</td><td class="benchmark">Small/petite adult</td><td class="r imperial">99</td></tr>
+        <tr><td class="r metric">55</td><td class="benchmark"></td><td class="r imperial">121</td></tr>
+        <tr><td class="r metric">60</td><td class="benchmark">Average woman (Aus)</td><td class="r imperial">132</td></tr>
+        <tr class="anchor"><td class="r metric">68</td><td class="benchmark"><strong>150 lbs exactly</strong></td><td class="r imperial">150</td></tr>
+        <tr><td class="r metric">70</td><td class="benchmark"></td><td class="r imperial">154</td></tr>
+        <tr><td class="r metric">75</td><td class="benchmark">Average man (Aus)</td><td class="r imperial">165</td></tr>
+        <tr><td class="r metric">80</td><td class="benchmark"></td><td class="r imperial">176</td></tr>
+        <tr class="anchor"><td class="r metric">82</td><td class="benchmark"><strong>180 lbs exactly</strong></td><td class="r imperial">180</td></tr>
+        <tr><td class="r metric">90</td><td class="benchmark">Large build / athletic</td><td class="r imperial">198</td></tr>
+        <tr class="anchor"><td class="r metric">91</td><td class="benchmark"><strong>200 lbs exactly</strong></td><td class="r imperial">200</td></tr>
+        <tr><td class="r metric">100</td><td class="benchmark">Heavy / tall &amp; muscular</td><td class="r imperial">220</td></tr>
+        <tr><td class="r metric">110</td><td class="benchmark"></td><td class="r imperial">242</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tips">
+    <div class="tips-title">Mental Shortcuts &mdash; Weight</div>
+    <ul>
+      <li><strong>Kg to lbs:</strong> double it, then add 10%. 70 kg &rarr; 140 + 14 = 154 lbs (exact: 154.3).</li>
+      <li><strong>Lbs to kg:</strong> halve it, then subtract 10%. 180 lbs &rarr; 90 - 9 = 81 kg (exact: 81.6).</li>
+      <li><strong>Quick anchor:</strong> 1 kg &asymp; 2.2 lbs. Just over double.</li>
+      <li><strong>At the butcher/grocery:</strong> 500 g &asymp; 1 lb. If you&rsquo;d buy &ldquo;a pound of ground beef,&rdquo; ask for 500 grams.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <h2 class="section-title">Drinks &amp; Everyday Liquids</h2>
+  <p class="section-sub">Millilitres and litres replace fluid ounces</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">Metric</th><th>Benchmark</th><th>Imperial</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">5 mL</td><td class="benchmark">A teaspoon</td><td class="imperial">1 tsp</td></tr>
+        <tr><td class="r metric">15 mL</td><td class="benchmark">A tablespoon</td><td class="imperial">1 tbsp</td></tr>
+        <tr class="anchor"><td class="r metric">30 mL</td><td class="benchmark"><strong>A shot</strong></td><td class="imperial">1 fl oz</td></tr>
+        <tr class="anchor"><td class="r metric">250 mL</td><td class="benchmark"><strong>Glass of water / Aus measuring cup</strong></td><td class="imperial">8.5 fl oz</td></tr>
+        <tr><td class="r metric">330 mL</td><td class="benchmark">A can of soda</td><td class="imperial">11.2 fl oz</td></tr>
+        <tr><td class="r metric">375 mL</td><td class="benchmark">Aus stubby (beer bottle)</td><td class="imperial">12.7 fl oz</td></tr>
+        <tr><td class="r metric">500 mL</td><td class="benchmark">A small water bottle</td><td class="imperial">~1 pint</td></tr>
+        <tr><td class="r metric">750 mL</td><td class="benchmark">A wine bottle</td><td class="imperial">25.4 fl oz</td></tr>
+        <tr class="anchor"><td class="r metric">1 L</td><td class="benchmark"><strong>Large water bottle / carton of milk</strong></td><td class="imperial">33.8 fl oz</td></tr>
+        <tr><td class="r metric">2 L</td><td class="benchmark">A big soda bottle</td><td class="imperial">~&frac12; gallon</td></tr>
+        <tr class="anchor"><td class="r metric">3.8 L</td><td class="benchmark"><strong>1 US gallon exactly</strong></td><td class="imperial">1 gallon</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Cooking Volumes</h2>
+  <p class="section-sub">Aus cup = 250 mL (US cup = 237 mL)</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">Metric</th><th>Benchmark</th><th>Imperial</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">60 mL</td><td class="benchmark">&frac14; Aus cup</td><td class="imperial">~&frac14; US cup</td></tr>
+        <tr><td class="r metric">80 mL</td><td class="benchmark">&frac13; Aus cup</td><td class="imperial">~&frac13; US cup</td></tr>
+        <tr><td class="r metric">125 mL</td><td class="benchmark">&frac12; Aus cup</td><td class="imperial">~&frac12; US cup</td></tr>
+        <tr class="anchor"><td class="r metric">250 mL</td><td class="benchmark"><strong>1 Aus cup</strong></td><td class="imperial">~1 US cup</td></tr>
+        <tr><td class="r metric">500 mL</td><td class="benchmark">2 Aus cups</td><td class="imperial">~1 US pint</td></tr>
+        <tr><td class="r metric">1 L</td><td class="benchmark">4 Aus cups</td><td class="imperial">~1 US quart</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Australian Beer Sizes</h2>
+  <p class="section-sub">Varies by state &mdash; the schooner is your safe default</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">Size</th><th>What to order</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">200 mL</td><td class="benchmark">Butcher (SA) / Seven (TAS)</td></tr>
+        <tr><td class="r metric">285 mL</td><td class="benchmark">Pot (VIC/QLD) / Middy (NSW) / Half pint (SA)</td></tr>
+        <tr class="anchor"><td class="r metric">425 mL</td><td class="benchmark"><strong>Schooner</strong> (most states) &mdash; the standard beer</td></tr>
+        <tr><td class="r metric">570 mL</td><td class="benchmark">Pint (most states) / Imperial pint</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tips">
+    <div class="tips-title">Mental Shortcuts &mdash; Volume</div>
+    <ul>
+      <li><strong>Litres to gallons:</strong> roughly 4 litres per gallon. A 60 L fuel tank &asymp; 16 gallons.</li>
+      <li><strong>mL to fl oz:</strong> divide by 30. 250 mL &divide; 30 &asymp; 8 oz.</li>
+      <li><strong>Aus cup = 250 mL,</strong> slightly bigger than a US cup (237 mL). Close enough for most recipes.</li>
+      <li><strong>At the pub:</strong> a schooner (425 mL) is a bit less than a US pint (473 mL). An Aus pint (570 mL) is bigger than a US pint.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== SHOES ===================== -->
+<section class="tab-panel" id="shoes" role="tabpanel">
+
+  <h2 class="section-title">Men&rsquo;s Shoes</h2>
+  <p class="section-sub">Aus/UK sizing is US minus 1</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">US</th><th class="r">Aus</th><th class="r">UK</th><th class="r">EU</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">7</td><td class="r">6</td><td class="r">6</td><td class="r imperial">39.5</td></tr>
+        <tr><td class="r metric">8</td><td class="r">7</td><td class="r">7</td><td class="r imperial">41</td></tr>
+        <tr><td class="r metric">9</td><td class="r">8</td><td class="r">8</td><td class="r imperial">42.5</td></tr>
+        <tr><td class="r metric">9.5</td><td class="r">8.5</td><td class="r">8.5</td><td class="r imperial">43</td></tr>
+        <tr class="anchor"><td class="r metric">10</td><td class="r"><strong>9</strong></td><td class="r">9</td><td class="r imperial">44</td></tr>
+        <tr><td class="r metric">10.5</td><td class="r">9.5</td><td class="r">9.5</td><td class="r imperial">44.5</td></tr>
+        <tr><td class="r metric">11</td><td class="r">10</td><td class="r">10</td><td class="r imperial">45</td></tr>
+        <tr><td class="r metric">12</td><td class="r">11</td><td class="r">11</td><td class="r imperial">46</td></tr>
+        <tr><td class="r metric">13</td><td class="r">12</td><td class="r">12</td><td class="r imperial">47.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Women&rsquo;s Shoes</h2>
+  <p class="section-sub">Aus and US are the same!</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="r">US</th><th class="r">Aus</th><th class="r">UK</th><th class="r">EU</th></tr></thead>
+      <tbody>
+        <tr><td class="r metric">5</td><td class="r">5</td><td class="r">3</td><td class="r imperial">35.5</td></tr>
+        <tr><td class="r metric">6</td><td class="r">6</td><td class="r">4</td><td class="r imperial">36.5</td></tr>
+        <tr><td class="r metric">7</td><td class="r">7</td><td class="r">5</td><td class="r imperial">38</td></tr>
+        <tr><td class="r metric">8</td><td class="r">8</td><td class="r">6</td><td class="r imperial">39</td></tr>
+        <tr><td class="r metric">8.5</td><td class="r">8.5</td><td class="r">6.5</td><td class="r imperial">39.5</td></tr>
+        <tr><td class="r metric">9</td><td class="r">9</td><td class="r">7</td><td class="r imperial">40</td></tr>
+        <tr><td class="r metric">10</td><td class="r">10</td><td class="r">8</td><td class="r imperial">41</td></tr>
+        <tr><td class="r metric">11</td><td class="r">11</td><td class="r">9</td><td class="r imperial">42.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tips">
+    <div class="tips-title">Mental Shortcuts</div>
+    <ul>
+      <li><strong>Men&rsquo;s:</strong> Aus/UK is US size minus 1. US 10 = Aus 9.</li>
+      <li><strong>Women&rsquo;s:</strong> Aus and US are the same. No conversion needed.</li>
+      <li><strong>EU sizes:</strong> you&rsquo;ll see these on many shoes. No clean shortcut &mdash; memorize your EU number from the table.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== FORMATS ===================== -->
+<section class="tab-panel" id="formats" role="tabpanel">
+
+  <h2 class="section-title">Dates</h2>
+  <p class="section-sub">DD/MM/YYYY &mdash; the #1 format trap</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Context</th><th>Australia</th><th>United States</th></tr></thead>
+      <tbody>
+        <tr><td class="benchmark">Written date</td><td class="metric">DD/MM/YYYY</td><td class="imperial">MM/DD/YYYY</td></tr>
+        <tr><td class="benchmark">June 3, 2026</td><td class="metric">03/06/2026</td><td class="imperial">06/03/2026</td></tr>
+        <tr class="anchor"><td class="benchmark">Ambiguous danger</td><td class="metric">01/02/2026 = <strong>1 Feb</strong></td><td class="imperial">01/02/2026 = <strong>Jan 2</strong></td></tr>
+        <tr><td class="benchmark">ISO (tech/forms)</td><td>2026-06-03</td><td>2026-06-03</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="compare-note">
+    <strong>Watch out:</strong> any date where both numbers are &le; 12 will be silently misread. Double-check appointment confirmations, flight bookings, and form submissions.
+  </div>
+
+  <h2 class="section-title">Time</h2>
+  <p class="section-sub">24-hour time is everywhere in writing</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Context</th><th>Australia</th><th>United States</th></tr></thead>
+      <tbody>
+        <tr><td class="benchmark">Casual speech</td><td>&ldquo;Seven o&rsquo;clock&rdquo; / &ldquo;seven PM&rdquo; &mdash; same as US</td><td>&ldquo;Seven o&rsquo;clock&rdquo; / &ldquo;seven PM&rdquo;</td></tr>
+        <tr><td class="benchmark">Saying 24h aloud</td><td class="metric">&ldquo;Nineteen hundred&rdquo; or &ldquo;nineteen oh oh&rdquo;</td><td>Rarely used outside military</td></tr>
+        <tr><td class="benchmark">&ldquo;Half seven&rdquo;</td><td class="metric">Means <strong>7:30</strong></td><td>Not commonly used</td></tr>
+        <tr><td class="benchmark">Written (schedules, doctors)</td><td class="metric"><strong>19:00</strong> (24h common)</td><td class="imperial">7:00 PM</td></tr>
+        <tr><td class="benchmark">Digital clocks/phones</td><td class="metric">Often default to 24h</td><td class="imperial">Default to 12h</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="compare-note">
+    24-hour time shows up on train timetables, restaurant bookings, event tickets, and official communications far more than in the US. But in everyday conversation people still say &ldquo;seven&rdquo; or &ldquo;seven PM&rdquo; &mdash; the 24h format is more written than spoken.
+  </div>
+
+  <h2 class="section-title">Floor Numbering</h2>
+  <p class="section-sub">You&rsquo;re always &ldquo;off by one&rdquo;</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th>Australia</th><th>United States</th></tr></thead>
+      <tbody>
+        <tr class="anchor"><td class="benchmark">Street level</td><td class="metric"><strong>Ground (G)</strong></td><td class="imperial">1st floor</td></tr>
+        <tr><td class="benchmark">One up</td><td class="metric">Level 1</td><td class="imperial">2nd floor</td></tr>
+        <tr><td class="benchmark">Two up</td><td class="metric">Level 2</td><td class="imperial">3rd floor</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="compare-note">
+    Elevator buttons will say G, 1, 2, 3 &mdash; you&rsquo;re always &ldquo;off by one&rdquo; from US thinking.
+  </div>
+
+  <h2 class="section-title">Phone Numbers</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Type</th><th>Australia</th><th>United States</th></tr></thead>
+      <tbody>
+        <tr><td class="benchmark">Country code</td><td class="metric">+61</td><td class="imperial">+1</td></tr>
+        <tr><td class="benchmark">Mobile format</td><td class="metric">04XX XXX XXX</td><td class="imperial">(XXX) XXX-XXXX</td></tr>
+        <tr><td class="benchmark">Landline format</td><td class="metric">(0X) XXXX XXXX</td><td class="imperial">(XXX) XXX-XXXX</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Other Differences</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Thing</th><th>Australia</th><th>United States</th></tr></thead>
+      <tbody>
+        <tr><td class="benchmark">Paper size</td><td class="metric"><strong>A4</strong> (210 &times; 297 mm)</td><td class="imperial">Letter (8.5 &times; 11 in)</td></tr>
+        <tr><td class="benchmark">Mains electricity</td><td class="metric"><strong>240V / 50Hz</strong>, Type I plug</td><td class="imperial">120V / 60Hz, Type A/B plug</td></tr>
+        <tr><td class="benchmark">Number format</td><td>Same: 1,000.50</td><td>Same: 1,000.50</td></tr>
+        <tr><td class="benchmark">Spelling</td><td class="metric"><strong>colour</strong>, <strong>organise</strong>, <strong>centre</strong></td><td class="imperial">color, organize, center</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SLANG ===================== -->
+<section class="tab-panel" id="slang" role="tabpanel">
+
+  <h2 class="section-title">How Australians Actually Say It</h2>
+  <p class="section-sub">Units get shortened and dropped in everyday speech. You&rsquo;ll be understood using the full word, but you&rsquo;ll sound textbook-formal.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>You&rsquo;d say (US)</th><th>They say (Aus)</th><th>Example</th></tr></thead>
+      <tbody class="slang-rows">
+        <tr class="slang-row"><td class="benchmark">&ldquo;75 kilograms&rdquo;</td><td>&ldquo;75 kilos&rdquo;</td><td>&ldquo;I weigh about 80 kilos&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;10 kilometers&rdquo;</td><td>&ldquo;10 kays&rdquo; (or &ldquo;10 k&rsquo;s&rdquo;)</td><td>&ldquo;It&rsquo;s about 10 kays from here&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;100 kilometers per hour&rdquo;</td><td>&ldquo;100 kays an hour&rdquo;</td><td>&ldquo;I was doing 110 kays an hour&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;35 degrees Celsius&rdquo;</td><td>&ldquo;35 degrees&rdquo;</td><td>&ldquo;It&rsquo;s gonna be 35 degrees tomorrow&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;180 centimeters&rdquo;</td><td>&ldquo;180&rdquo; (no unit)</td><td>&ldquo;Yeah, he&rsquo;s about 180&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;10 millimeters&rdquo;</td><td>&ldquo;10 mil&rdquo;</td><td>&ldquo;Hand me the 10 mil spanner&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;250 millilitres&rdquo;</td><td>&ldquo;250 mils&rdquo;</td><td>&ldquo;Add 250 mils of stock&rdquo;</td></tr>
+        <tr class="slang-row"><td class="benchmark">&ldquo;litres&rdquo;</td><td>&ldquo;litres&rdquo; (no shortening)</td><td>&ldquo;Put 40 litres in&rdquo;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tips">
+    <div class="tips-title">The Pattern</div>
+    <ul>
+      <li>Australians <strong>shorten everything they can</strong>: kilos, kays, mils.</li>
+      <li><strong>Units get dropped</strong> when context makes them obvious &mdash; &ldquo;I&rsquo;m 180&rdquo; for height, &ldquo;it&rsquo;s 35 degrees&rdquo; for weather, &ldquo;doing 110&rdquo; for driving speed.</li>
+      <li><strong>Celsius, centimeters, and km/h are always assumed.</strong> You never need to specify the unit &mdash; metric is the default.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  var btns = document.querySelectorAll('.tab-btn');
+  var panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btns.forEach(function(b){b.classList.remove('active');});
+      panels.forEach(function(p){p.classList.remove('active');});
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    });
+  });
+})();
+</script>
+</body>
+</html>
