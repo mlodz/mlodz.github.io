@@ -108,10 +108,16 @@
   .level:active { transform: scale(0.97); }
   .level-name { font-size: 22px; font-weight: 600; }
   .level-example { font-size: 18px; color: var(--muted); white-space: nowrap; }
-  .level .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .level-marker { width: 38px; display: flex; justify-content: center; flex-shrink: 0; font-size: 36px; line-height: 1; }
+  .level .dot { width: 14px; height: 14px; border-radius: 50%; }
   .level-left { display: flex; align-items: center; gap: 12px; }
+  .level-left > span:last-child { min-width: 0; }
   .level-best { display: block; font-size: 18px; letter-spacing: 2px; line-height: 1; margin-top: 2px; color: var(--line); }
   .level-best .earned { color: var(--gold); }
+  .level-medal { display: block; margin-top: 3px; font-size: 16px; font-weight: 600; color: #b07a00; }
+  .level-medal-next { display: block; font-size: 14px; color: var(--muted); }
+  .level-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .level-tricky { font-size: 15px; font-weight: 600; color: #b07a00; white-space: nowrap; }
 
   .home-links { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
   .home-link {
@@ -138,6 +144,18 @@
   .day-name { font-size: 22px; font-weight: 600; }
   .day-rounds { font-size: 16px; color: var(--muted); }
   .day-stars { font-size: 26px; font-weight: 700; white-space: nowrap; }
+  .info-link {
+    display: block; margin: 20px auto 0; min-height: 44px; padding: 0 12px;
+    background: none; color: var(--muted); font-size: 16px; text-decoration: underline;
+  }
+  .info-card {
+    background: var(--card); border: 3px solid var(--line); border-radius: 18px;
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .info-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .info-card p, .info-card li { font-size: 18px; line-height: 1.45; }
+  .info-card p + ul, .info-card ul + p { margin-top: 8px; }
+  .info-card ul { padding-left: 22px; display: grid; gap: 6px; }
   .empty-note { text-align: center; color: var(--muted); font-size: 20px; padding: 40px 12px; }
   .sticker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .sticker-tile {
@@ -218,7 +236,8 @@
   .stars { font-size: 56px; letter-spacing: 4px; margin-bottom: 8px; }
   .star { display: inline-block; opacity: 0.18; filter: grayscale(1); }
   .star.earned { opacity: 1; filter: none; animation: pop 0.45s ease-out; }
-  .new-best { display: inline-block; min-height: 30px; margin-bottom: 6px; font-size: 20px; font-weight: 600; color: #b07a00; }
+  .medal-note { min-height: 30px; margin-bottom: 8px; font-size: 20px; font-weight: 600; color: #b07a00; line-height: 1.35; }
+  .medal-note.new-medal { font-size: 24px; animation: pop 0.5s ease-out; }
   .reward {
     visibility: hidden;
     background: #fff6dd; border: 3px solid #ffe4a1; border-radius: 20px;
@@ -278,6 +297,15 @@
     <button class="home-link" id="sticker-book-btn"></button>
     <button class="home-link" id="activity-btn"></button>
   </div>
+  <button class="info-link" id="info-btn">ℹ️ How it works</button>
+</section>
+
+<section class="screen" id="info">
+  <div class="page-head">
+    <button class="quit" id="info-back" aria-label="Back to levels">&times;</button>
+    <h2>How it works</h2>
+  </div>
+  <div id="info-cards"></div>
 </section>
 
 <section class="screen" id="stickers">
@@ -317,7 +345,7 @@
   <h2 id="done-title"></h2>
   <div class="score" id="score"></div>
   <div class="done-total">Total: <span class="num" id="done-total"></span> ⭐</div>
-  <div><span class="new-best" id="new-best"></span></div>
+  <div class="medal-note" id="medal-note"></div>
   <div class="reward" id="reward">
     <div class="reward-label" id="reward-label"></div>
     <div class="reward-sticker" id="reward-sticker"></div>
@@ -333,6 +361,9 @@
   const MAX_ANSWER_DIGITS = 3;
   const MAX_STARS = 3;
   const STARS_FOR_STICKER = 2;
+  const GOOD_ROUND_STARS = 2;
+  const MAX_TRICKY_PER_ROUND = 4;
+  const TRICKY_BEATEN_AFTER = 3; // first-try rights in a row
   const STORAGE_KEY = 'math-practice:v1';
   const MAX_SAVED_ROUNDS = 2000;
 
@@ -537,9 +568,23 @@
     return `${a}+${b}`;
   }
 
-  function makeSession(level) {
-    const problems = [];
-    const seen = new Set();
+  function pairFromKey(key) {
+    return key.split('+').map(Number);
+  }
+
+  function shuffled(list) {
+    const copy = [...list];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = randInt(0, i);
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  // Tricky facts she has missed come back first, then random problems fill the round.
+  function makeSession(level, trickyKeys) {
+    const problems = shuffled(trickyKeys).slice(0, MAX_TRICKY_PER_ROUND).map(pairFromKey);
+    const seen = new Set(problems.map(problemKey));
     for (let attempts = 0; problems.length < QUESTIONS_PER_SESSION; attempts++) {
       const pair = level.make();
       const allowRepeat = attempts > 500; // tiny levels may not have 10 distinct problems
@@ -547,7 +592,7 @@
       seen.add(problemKey(pair));
       problems.push(pair);
     }
-    return problems;
+    return shuffled(problems);
   }
 
   function longestRightRun(results) {
@@ -566,10 +611,55 @@
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   }
 
+  const TWO_STARS_AT = 7; // first-try rights
+
   function starsFor(firstTryCorrect) {
     if (firstTryCorrect === QUESTIONS_PER_SESSION) return 3;
-    if (firstTryCorrect >= 7) return 2;
+    if (firstTryCorrect >= TWO_STARS_AT) return 2;
     return 1;
+  }
+
+  const GOLD_PERFECT_ROUNDS = 10;
+
+  // Each medal needs the one before it. Diamond counts only runs after Gold, or a perfect streak on
+  // the way to Gold would award both at once.
+  const MEDALS = Object.freeze([
+    { icon: '🥉', name: 'Bronze', goal: 3, countToEarn: r => r.goodRounds,
+      howToEarn: n => `Finish ${n} rounds with 2 or 3 stars.` },
+    { icon: '🥈', name: 'Silver', goal: 5, countToEarn: r => r.perfectRounds,
+      howToEarn: n => `Get ${n} perfect rounds. A perfect round is all 3 stars!` },
+    { icon: '🥇', name: 'Gold', goal: GOLD_PERFECT_ROUNDS, countToEarn: r => r.perfectRounds,
+      howToEarn: n => `Get ${n} perfect rounds.` },
+    { icon: '💎', name: 'Diamond', goal: 5, countToEarn: r => r.longestRunAfterGold,
+      howToEarn: n => `After you have Gold, get ${n} perfect rounds in a row.` },
+  ]);
+
+  function levelRecord(rounds, levelAlias) {
+    const record = { goodRounds: 0, perfectRounds: 0, currentRunAfterGold: 0, longestRunAfterGold: 0 };
+    for (const round of rounds) {
+      if (round.level !== levelAlias) continue;
+      const isPerfect = round.stars === MAX_STARS;
+      const hadGold = record.perfectRounds >= GOLD_PERFECT_ROUNDS;
+      if (round.stars >= GOOD_ROUND_STARS) record.goodRounds++;
+      if (isPerfect) record.perfectRounds++;
+      if (hadGold) {
+        record.currentRunAfterGold = isPerfect ? record.currentRunAfterGold + 1 : 0;
+        record.longestRunAfterGold = Math.max(record.longestRunAfterGold, record.currentRunAfterGold);
+      }
+    }
+    return record;
+  }
+
+  function medalsEarnedBy(record) {
+    let earned = 0;
+    while (earned < MEDALS.length && MEDALS[earned].countToEarn(record) >= MEDALS[earned].goal) earned++;
+    return earned;
+  }
+
+  // Names the next medal but never shows its icon: icons appear only once earned.
+  function nextMedalGoal(earned, levelName) {
+    if (earned === MEDALS.length) return `You've mastered ${levelName}!`;
+    return `Keep playing to earn a ${MEDALS[earned].name} medal!`;
   }
 
   // Shown in order, one per round, looping back to the start; see `messageCursor` in saved data.
@@ -640,11 +730,14 @@
   //   rounds:    oldest first, capped at MAX_SAVED_ROUNDS —
   //              { day: 'YYYY-MM-DD' local, finishedAt: epoch ms, level: alias,
   //                stars, firstTryCorrect, longestRun, sticker (null below STARS_FOR_STICKER), isNewSticker }
+  //   medals:    { [level alias]: medals earned, 0–4 }; only goes up, so trimming `rounds` can't take one away
+  //   trickyFacts: { [level alias]: { 'a+b': first-try rights since her last miss } };
+  //              a fact is removed once that reaches TRICKY_BEATEN_AFTER
   //   storyCursor: { [level alias]: stories used so far }; next story is cursor % length
   //   messageCursor: { silly, growth }: rounds that have used each set; next line is cursor % length
   //   soundOn:   boolean
   function loadProgress() {
-    const fresh = { schemaVersion: 1, totalStars: 0, days: {}, bestStars: {}, stickers: [], rounds: [], storyCursor: {}, messageCursor: { silly: 0, growth: 0 }, soundOn: true };
+    const fresh = { schemaVersion: 1, totalStars: 0, days: {}, bestStars: {}, stickers: [], rounds: [], medals: {}, trickyFacts: {}, storyCursor: {}, messageCursor: { silly: 0, growth: 0 }, soundOn: true };
     try {
       return { ...fresh, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) };
     } catch {
@@ -660,7 +753,38 @@
 
   const progress = loadProgress();
 
-  function recordRound(levelAlias, results) {
+  function medalsEarnedOn(levelAlias) {
+    const record = levelRecord(progress.rounds, levelAlias);
+    return Math.max(progress.medals[levelAlias] ?? 0, medalsEarnedBy(record));
+  }
+
+  function trickyKeysFor(levelAlias) {
+    return Object.keys(progress.trickyFacts[levelAlias] ?? {});
+  }
+
+  // Returns how many tricky facts she beat this round.
+  function updateTrickyFacts(levelAlias, problems, results) {
+    const tricky = progress.trickyFacts[levelAlias] ?? {};
+    let beaten = 0;
+    problems.forEach(({ a, b }, i) => {
+      const key = problemKey([a, b]);
+      if (results[i] !== 'right') {
+        tricky[key] = 0;
+      } else if (key in tricky) {
+        tricky[key]++;
+        if (tricky[key] >= TRICKY_BEATEN_AFTER) {
+          delete tricky[key];
+          beaten++;
+        }
+      }
+    });
+    progress.trickyFacts[levelAlias] = tricky;
+    return beaten;
+  }
+
+  function recordRound(level, problems, results) {
+    const levelAlias = level.alias;
+    const medalsBefore = medalsEarnedOn(levelAlias);
     const firstTryCorrect = results.filter(r => r === 'right').length;
     const stars = starsFor(firstTryCorrect);
     const previousBest = progress.bestStars[levelAlias] ?? 0;
@@ -691,8 +815,20 @@
       isNewSticker,
     });
     progress.rounds = progress.rounds.slice(-MAX_SAVED_ROUNDS);
+    const medalsAfter = medalsEarnedOn(levelAlias);
+    progress.medals[levelAlias] = medalsAfter;
+    const trickyBeaten = updateTrickyFacts(levelAlias, problems, results);
     saveProgress();
-    return { firstTryCorrect, stars, beatOldBest: previousBest > 0 && stars > previousBest, sticker, isNewSticker, message };
+    return {
+      firstTryCorrect,
+      stars,
+      sticker,
+      isNewSticker,
+      message,
+      newMedal: medalsAfter > medalsBefore ? MEDALS[medalsAfter - 1] : null,
+      medalGoal: nextMedalGoal(medalsAfter, level.name),
+      trickyBeaten,
+    };
   }
 
   // ---------- Sound (synthesized, so there are no audio files to load) ----------
@@ -706,6 +842,7 @@
     star3: [[1046.5, 0, 0.45]],
     fanfare: [[523.25, 0, 0.15], [659.25, 0.12, 0.15], [783.99, 0.24, 0.15], [1046.5, 0.36, 0.7]],
     sticker: [[1046.5, 0, 0.12], [1318.5, 0.1, 0.12], [1568, 0.2, 0.4]],
+    medal: [[783.99, 0, 0.12], [987.77, 0.1, 0.12], [1174.66, 0.2, 0.12], [1567.98, 0.3, 0.8]],
   });
 
   let audioCtx = null;
@@ -762,7 +899,7 @@
   const $ = id => document.getElementById(id);
 
   const ui = {
-    screens: { home: $('home'), stickers: $('stickers'), activity: $('activity'), quiz: $('quiz'), done: $('done') },
+    screens: { home: $('home'), stickers: $('stickers'), activity: $('activity'), info: $('info'), quiz: $('quiz'), done: $('done') },
     meter: $('meter'),
     count: $('count'),
     problem: $('problem'),
@@ -798,22 +935,46 @@
     return html;
   }
 
+  // Her latest medal stands in for the level's colored dot once she has one.
+  function levelMarkerHtml(level) {
+    const earned = medalsEarnedOn(level.alias);
+    if (earned) return MEDALS[earned - 1].icon;
+    return `<span class="dot" style="background:${level.color}"></span>`;
+  }
+
+  // Best stars until she earns a medal, then the medal she has and the name of the next one.
+  function levelProgressHtml(level) {
+    const earned = medalsEarnedOn(level.alias);
+    if (!earned) {
+      const best = progress.bestStars[level.alias] ?? 0;
+      return `<span class="level-best" aria-label="Best: ${best} stars">${bestStarsHtml(best)}</span>`;
+    }
+    const medal = MEDALS[earned - 1];
+    const nextGoal = earned === MEDALS.length ? "You've mastered this level!" : nextMedalGoal(earned, level.name);
+    return `
+      <span class="level-medal">You have a ${medal.name} medal</span>
+      <span class="level-medal-next">${nextGoal}</span>`;
+  }
+
   function renderLevels() {
     const list = $('levels');
     list.innerHTML = '';
     LEVELS.forEach(level => {
-      const best = progress.bestStars[level.alias] ?? 0;
+      const trickyCount = trickyKeysFor(level.alias).length;
       const btn = document.createElement('button');
       btn.className = 'level';
       btn.innerHTML = `
         <span class="level-left">
-          <span class="dot" style="background:${level.color}"></span>
+          <span class="level-marker">${levelMarkerHtml(level)}</span>
           <span>
             <span class="level-name">${level.name}</span>
-            <span class="level-best" aria-label="Best: ${best} stars">${bestStarsHtml(best)}</span>
+            ${levelProgressHtml(level)}
           </span>
         </span>
-        <span class="level-example">${level.example}</span>`;
+        <span class="level-right">
+          <span class="level-example">${level.example}</span>
+          ${trickyCount ? `<span class="level-tricky">💪 ${trickyCount} tricky</span>` : ''}
+        </span>`;
       btn.addEventListener('click', () => startSession(level));
       list.appendChild(btn);
     });
@@ -880,6 +1041,39 @@
     return dateFromDay(day).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
   }
 
+  // Written for her to read. Medal icons stay hidden here too: she sees each one only once she earns it.
+  function showInfo() {
+    const listItems = items => items.map(item => `<li>${item}</li>`).join('');
+    const medalRules = MEDALS.map(medal => `<b>${medal.name}:</b> ${medal.howToEarn(medal.goal)}`);
+    $('info-cards').innerHTML = `
+      <section class="info-card">
+        <h3>⭐ Stars</h3>
+        <ul>${listItems([
+          `All ${QUESTIONS_PER_SESSION} right on your first try: ⭐⭐⭐`,
+          `${TWO_STARS_AT} or more right on your first try: ⭐⭐`,
+          'Less than that: ⭐. Every round gets at least one star!',
+          `Get ${STARS_FOR_STICKER} or 3 stars to win a sticker.`,
+        ])}</ul>
+      </section>
+      <section class="info-card">
+        <h3>🏆 Medals</h3>
+        <p>Every level has its own medals. You win them one at a time, in this order:</p>
+        <ul>${listItems(medalRules)}</ul>
+        <p>Once you win a medal, it's yours forever!</p>
+      </section>
+      <section class="info-card">
+        <h3>💪 Tricky ones</h3>
+        <ul>${listItems([
+          'If you get a problem wrong, or need a second try, it becomes a tricky one.',
+          'Tricky ones come back in your next rounds. Look for "💪 Tricky one!" at the top.',
+          `Get it right on your first try ${TRICKY_BEATEN_AFTER} times in a row, and you beat it!`,
+          "Missed it again? That's okay. It just stays tricky a little longer.",
+          'The 💪 number on a level shows how many tricky ones are left.',
+        ])}</ul>
+      </section>`;
+    show('info');
+  }
+
   function showActivity() {
     const list = $('day-list');
     list.innerHTML = '';
@@ -931,7 +1125,8 @@
       else if (i === state.index) seg.className = 'current';
       ui.meter.appendChild(seg);
     }
-    ui.count.textContent = `Question ${state.index + 1} of ${QUESTIONS_PER_SESSION}`;
+    const trickyTag = state.problems[state.index]?.tricky ? ' · 💪 Tricky one!' : '';
+    ui.count.textContent = `Question ${state.index + 1} of ${QUESTIONS_PER_SESSION}${trickyTag}`;
   }
 
   function renderAnswer(mood = '') {
@@ -967,9 +1162,15 @@
     clearTimeout(state.pendingTimer);
     loadConfetti();
     state.level = level;
-    const pairs = makeSession(level);
+    const trickyKeys = trickyKeysFor(level.alias);
+    const pairs = makeSession(level, trickyKeys);
     const prompts = promptsFor(level, pairs);
-    state.problems = pairs.map(([a, b], i) => ({ a, b, prompt: prompts[i] }));
+    state.problems = pairs.map(([a, b], i) => ({
+      a,
+      b,
+      prompt: prompts[i],
+      tricky: trickyKeys.includes(problemKey([a, b])),
+    }));
     state.index = 0;
     state.results = [];
     show('quiz');
@@ -1042,7 +1243,8 @@
     $('done-title').textContent = DONE_TITLES[round.stars];
     $('done-message').textContent = round.message;
     $('score').textContent = `${round.firstTryCorrect} of ${QUESTIONS_PER_SESSION} right on the first try`;
-    $('new-best').textContent = '';
+    $('medal-note').textContent = '';
+    $('medal-note').classList.remove('new-medal');
     $('reward').classList.remove('shown');
   }
 
@@ -1059,12 +1261,28 @@
     later(() => revealStar(0), 400);
   }
 
+  function showMedalNote(round) {
+    const medalLine = round.newMedal
+      ? `${round.newMedal.icon} You earned ${round.newMedal.name} on ${state.level.name}!`
+      : round.medalGoal;
+    const lines = [medalLine];
+    if (round.trickyBeaten) lines.push(`💪 You beat ${plural(round.trickyBeaten, 'tricky fact')}!`);
+    $('medal-note').innerHTML = lines.join('<br>');
+    $('medal-note').classList.toggle('new-medal', Boolean(round.newMedal));
+  }
+
+  function celebrateMedal(round) {
+    showMedalNote(round);
+    playSound('medal');
+    fireConfetti(MAX_STARS);
+  }
+
   function finale(round) {
     playSound('fanfare');
     fireConfetti(round.stars);
     $('done-total').textContent = progress.totalStars;
     $('done-total').classList.add('bump');
-    if (round.beatOldBest) $('new-best').textContent = `🏆 New best on ${state.level.name}!`;
+    if (!round.newMedal) showMedalNote(round);
     later(() => {
       $('reward-sticker').textContent = round.sticker ?? '';
       if (round.sticker) {
@@ -1074,11 +1292,12 @@
         $('reward-label').textContent = 'Try again to win a sticker!';
       }
       $('reward').classList.add('shown');
+      if (round.newMedal) later(() => celebrateMedal(round), 900);
     }, 900);
   }
 
   function showDone() {
-    const round = recordRound(state.level.alias, state.results);
+    const round = recordRound(state.level, state.problems, state.results);
     renderDone(round);
     show('done');
     celebrate(round);
@@ -1117,6 +1336,8 @@
   $('activity-btn').addEventListener('click', showActivity);
   $('star-total-btn').addEventListener('click', showActivity);
   $('activity-back').addEventListener('click', goHome);
+  $('info-btn').addEventListener('click', showInfo);
+  $('info-back').addEventListener('click', goHome);
 
   renderHome();
   renderKeypad();
