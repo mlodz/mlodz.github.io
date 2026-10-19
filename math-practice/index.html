@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Math Practice</title>
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Math">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#6c4ee0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #6c4ee0;
+    --purple-dk: #5236c4;
+    --bg: #f5f2ff;
+    --card: #ffffff;
+    --ink: #2a2350;
+    --muted: #7a7299;
+    --line: #e4defa;
+    --green: #22b573;
+    --red: #ef5a5a;
+    --gold: #ffb627;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 100%;
+  }
+
+  body {
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  button {
+    font-family: inherit;
+    color: inherit;
+    border: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .screen { display: none; flex: 1; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; padding: 20px 16px 24px; }
+  .screen.active { display: flex; }
+
+  /* ---------- Home ---------- */
+  .hero {
+    background: var(--purple);
+    color: #fff;
+    border-radius: 24px;
+    padding: 28px 22px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.1; }
+  .hero p { font-size: 18px; opacity: 0.85; margin-top: 6px; }
+
+  .levels { display: grid; gap: 12px; }
+
+  .level {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 64px;
+    padding: 14px 18px;
+    background: var(--card);
+    border: 3px solid var(--line);
+    border-radius: 18px;
+    text-align: left;
+    transition: transform 0.1s ease;
+  }
+  .level:active { transform: scale(0.97); }
+  .level-name { font-size: 22px; font-weight: 600; }
+  .level-example { font-size: 18px; color: var(--muted); white-space: nowrap; }
+  .level .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .level-left { display: flex; align-items: center; gap: 12px; }
+
+  /* ---------- Quiz ---------- */
+  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .quit {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card); border: 3px solid var(--line);
+    font-size: 20px; font-weight: 700; color: var(--muted);
+    flex-shrink: 0;
+  }
+  .meter { flex: 1; display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+  .meter span { height: 14px; border-radius: 7px; background: var(--line); transition: background 0.2s ease; }
+  .meter span.right { background: var(--green); }
+  .meter span.wrong { background: var(--gold); }
+  .meter span.current { background: var(--purple); opacity: 0.45; }
+  .count { text-align: center; color: var(--muted); font-size: 17px; margin-bottom: 8px; }
+
+  .problem-card {
+    background: var(--card);
+    border-radius: 24px;
+    border: 3px solid var(--line);
+    padding: 24px 12px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .problem { font-size: clamp(48px, 15vw, 64px); font-weight: 700; line-height: 1.1; white-space: nowrap; }
+  .answer {
+    display: inline-block;
+    min-width: 2.2em;
+    margin-top: 10px;
+    padding: 2px 16px;
+    font-size: clamp(48px, 15vw, 64px);
+    font-weight: 700;
+    line-height: 1.2;
+    border-bottom: 5px solid var(--purple);
+    color: var(--purple);
+    min-height: 1.3em;
+  }
+  .answer.right { color: var(--green); border-color: var(--green); }
+  .answer.wrong { color: var(--red); border-color: var(--red); animation: shake 0.35s; }
+  .feedback { min-height: 30px; margin-top: 10px; font-size: 22px; font-weight: 600; }
+  .feedback.right { color: var(--green); }
+  .feedback.wrong { color: var(--red); }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: auto; }
+  .key {
+    height: 64px;
+    border-radius: 16px;
+    background: var(--card);
+    border: 3px solid var(--line);
+    font-size: 30px;
+    font-weight: 600;
+    transition: transform 0.08s ease;
+  }
+  .key:active { transform: scale(0.94); background: var(--line); }
+  .key.back { color: var(--muted); font-size: 26px; }
+  .key.go { background: var(--purple); border-color: var(--purple); color: #fff; font-size: 24px; }
+  .key.go:active { background: var(--purple-dk); }
+  .keypad.locked .key { pointer-events: none; opacity: 0.6; }
+
+  /* ---------- Done ---------- */
+  .done { justify-content: center; text-align: center; }
+  .stars { font-size: 56px; letter-spacing: 4px; margin-bottom: 8px; }
+  .done h2 { font-size: 40px; font-weight: 700; }
+  .score { font-size: 24px; color: var(--muted); margin: 8px 0 28px; }
+  .big-btn {
+    display: block; width: 100%;
+    min-height: 60px; border-radius: 18px;
+    font-size: 24px; font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .big-btn.primary { background: var(--purple); color: #fff; }
+  .big-btn.secondary { background: var(--card); border: 3px solid var(--line); }
+</style>
+</head>
+<body>
+
+<section class="screen active" id="home">
+  <div class="hero">
+    <h1>Math Practice</h1>
+    <p>Pick a level!</p>
+  </div>
+  <div class="levels" id="levels"></div>
+</section>
+
+<section class="screen" id="quiz">
+  <div class="topbar">
+    <button class="quit" id="quit" aria-label="Back to levels">&times;</button>
+    <div class="meter" id="meter"></div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="problem-card">
+    <div class="problem" id="problem"></div>
+    <div class="answer" id="answer"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+  <div class="keypad" id="keypad"></div>
+</section>
+
+<section class="screen done" id="done">
+  <div class="stars" id="stars"></div>
+  <h2 id="done-title"></h2>
+  <div class="score" id="score"></div>
+  <button class="big-btn primary" id="again">Play again</button>
+  <button class="big-btn secondary" id="home-btn">Pick a level</button>
+</section>
+
+<script>
+  const QUESTIONS_PER_SESSION = 10;
+  const TRIES_PER_QUESTION = 2;
+  const MAX_ANSWER_DIGITS = 3;
+
+  function randInt(min, max) {
+    return min + Math.floor(Math.random() * (max - min + 1));
+  }
+
+  function nextTen(n) {
+    return Math.ceil(n / 10) * 10;
+  }
+
+  // Each generator returns [a, b]; it retries until the pair fits the level's rule.
+  function pairWhere(pick, fits) {
+    for (;;) {
+      const [a, b] = pick();
+      if (fits(a, b)) return [a, b];
+    }
+  }
+
+  function twoDigitNotEndingInZero(min, max) {
+    return pairWhere(() => [randInt(min, max), 0], a => a % 10 !== 0)[0];
+  }
+
+  const LEVELS = [
+    {
+      name: 'Easy', example: '7 + 2', color: '#22b573',
+      make: () => pairWhere(() => [randInt(1, 9), randInt(1, 9)], (a, b) => a + b <= 10),
+    },
+    {
+      name: 'Medium', example: '8 + 5', color: '#3fa7f5',
+      make: () => pairWhere(() => [randInt(2, 9), randInt(2, 9)], (a, b) => a + b > 10),
+    },
+    {
+      name: 'Hard', example: '12 + 7', color: '#ffb627',
+      make: () => pairWhere(() => [randInt(10, 19), randInt(1, 9)], (a, b) => a + b <= 20),
+    },
+    {
+      name: 'Extra Hard', example: '15 + 8', color: '#ff8a3d',
+      make: () => pairWhere(() => [randInt(12, 19), randInt(2, 9)], (a, b) => a + b > 20),
+    },
+    {
+      name: 'Super Hard', example: '12 + 17', color: '#ef5a5a',
+      make: () => [randInt(10, 19), randInt(10, 19)],
+    },
+    {
+      name: 'Tens Easy', example: '23 + 7', color: '#a25ce8',
+      make: () => {
+        const a = twoDigitNotEndingInZero(11, 99);
+        return [a, nextTen(a) - a];
+      },
+    },
+    {
+      name: 'Tens Medium', example: '61 + 29', color: '#6c4ee0',
+      make: () => {
+        // b's ones digit completes a's to 10, and the total stays at or under 100.
+        const a = twoDigitNotEndingInZero(11, 89);
+        const extraTens = randInt(1, (100 - nextTen(a)) / 10);
+        return [a, nextTen(a) - a + extraTens * 10];
+      },
+    },
+  ];
+
+  function problemKey([a, b]) {
+    return `${a}+${b}`;
+  }
+
+  function makeSession(level) {
+    const problems = [];
+    const seen = new Set();
+    for (let attempts = 0; problems.length < QUESTIONS_PER_SESSION; attempts++) {
+      const pair = level.make();
+      const allowRepeat = attempts > 500; // tiny levels may not have 10 distinct problems
+      if (seen.has(problemKey(pair)) && !allowRepeat) continue;
+      seen.add(problemKey(pair));
+      problems.push(pair);
+    }
+    return problems;
+  }
+
+  function starsFor(firstTryCorrect) {
+    if (firstTryCorrect === QUESTIONS_PER_SESSION) return 3;
+    if (firstTryCorrect >= 7) return 2;
+    return 1;
+  }
+
+  const CHEERS = ['Great job!', 'You got it!', 'Awesome!', 'Nice!', 'Super!', 'Yes!'];
+  const DONE_TITLES = { 3: 'Perfect!', 2: 'Great work!', 1: 'Good practice!' };
+
+  const $ = id => document.getElementById(id);
+
+  const ui = {
+    screens: { home: $('home'), quiz: $('quiz'), done: $('done') },
+    meter: $('meter'),
+    count: $('count'),
+    problem: $('problem'),
+    answer: $('answer'),
+    feedback: $('feedback'),
+    keypad: $('keypad'),
+  };
+
+  const state = {
+    level: null,
+    problems: [],
+    index: 0,
+    typed: '',
+    triesLeft: TRIES_PER_QUESTION,
+    results: [], // 'right' | 'wrong' per finished question
+    locked: false,
+    pendingTimer: null,
+  };
+
+  function later(fn, delayMs) {
+    clearTimeout(state.pendingTimer);
+    state.pendingTimer = setTimeout(fn, delayMs);
+  }
+
+  function goHome() {
+    clearTimeout(state.pendingTimer);
+    show('home');
+  }
+
+  function show(name) {
+    for (const [key, el] of Object.entries(ui.screens)) el.classList.toggle('active', key === name);
+    window.scrollTo(0, 0);
+  }
+
+  function renderLevels() {
+    const list = $('levels');
+    LEVELS.forEach(level => {
+      const btn = document.createElement('button');
+      btn.className = 'level';
+      btn.innerHTML = `
+        <span class="level-left">
+          <span class="dot" style="background:${level.color}"></span>
+          <span class="level-name">${level.name}</span>
+        </span>
+        <span class="level-example">${level.example}</span>`;
+      btn.addEventListener('click', () => startSession(level));
+      list.appendChild(btn);
+    });
+  }
+
+  function renderKeypad() {
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'go'];
+    keys.forEach(key => {
+      const btn = document.createElement('button');
+      btn.className = 'key';
+      if (key === 'back') { btn.classList.add('back'); btn.textContent = '⌫'; btn.setAttribute('aria-label', 'Delete'); }
+      else if (key === 'go') { btn.classList.add('go'); btn.textContent = 'Check'; }
+      else btn.textContent = key;
+      btn.addEventListener('click', () => pressKey(key));
+      ui.keypad.appendChild(btn);
+    });
+  }
+
+  function renderMeter() {
+    ui.meter.innerHTML = '';
+    for (let i = 0; i < QUESTIONS_PER_SESSION; i++) {
+      const seg = document.createElement('span');
+      if (state.results[i]) seg.className = state.results[i];
+      else if (i === state.index) seg.className = 'current';
+      ui.meter.appendChild(seg);
+    }
+    ui.count.textContent = `Question ${state.index + 1} of ${QUESTIONS_PER_SESSION}`;
+  }
+
+  function renderAnswer(mood = '') {
+    ui.answer.textContent = state.typed || ' ';
+    ui.answer.className = `answer ${mood}`;
+  }
+
+  function setFeedback(text, mood = '') {
+    ui.feedback.textContent = text;
+    ui.feedback.className = `feedback ${mood}`;
+  }
+
+  function setLocked(locked) {
+    state.locked = locked;
+    ui.keypad.classList.toggle('locked', locked);
+  }
+
+  function startSession(level) {
+    clearTimeout(state.pendingTimer);
+    state.level = level;
+    state.problems = makeSession(level);
+    state.index = 0;
+    state.results = [];
+    show('quiz');
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const [a, b] = state.problems[state.index];
+    state.typed = '';
+    state.triesLeft = TRIES_PER_QUESTION;
+    ui.problem.textContent = `${a} + ${b} =`;
+    renderAnswer();
+    setFeedback('');
+    renderMeter();
+    setLocked(false);
+  }
+
+  function pressKey(key) {
+    if (state.locked) return;
+    if (key === 'back') state.typed = state.typed.slice(0, -1);
+    else if (key === 'go') return checkAnswer();
+    else if (state.typed.length < MAX_ANSWER_DIGITS) state.typed = (state.typed + key).replace(/^0+(?=\d)/, '');
+    renderAnswer();
+    setFeedback('');
+  }
+
+  function checkAnswer() {
+    if (!state.typed) return;
+    const [a, b] = state.problems[state.index];
+    const correct = a + b;
+    const isRight = Number(state.typed) === correct;
+    const firstTry = state.triesLeft === TRIES_PER_QUESTION;
+    state.triesLeft--;
+
+    if (isRight) {
+      renderAnswer('right');
+      setFeedback(CHEERS[randInt(0, CHEERS.length - 1)], 'right');
+      finishQuestion(firstTry ? 'right' : 'wrong', 900);
+    } else if (state.triesLeft > 0) {
+      renderAnswer('wrong');
+      setFeedback('Try again!', 'wrong');
+      setLocked(true);
+      later(() => { state.typed = ''; renderAnswer(); setLocked(false); }, 700);
+    } else {
+      state.typed = String(correct);
+      renderAnswer('right');
+      setFeedback(`It's ${correct}`, 'wrong');
+      finishQuestion('wrong', 2000);
+    }
+  }
+
+  function finishQuestion(result, delayMs) {
+    state.results[state.index] = result;
+    setLocked(true);
+    renderMeter();
+    later(() => {
+      state.index++;
+      if (state.index < QUESTIONS_PER_SESSION) showQuestion();
+      else showDone();
+    }, delayMs);
+  }
+
+  function showDone() {
+    const firstTryCorrect = state.results.filter(r => r === 'right').length;
+    const stars = starsFor(firstTryCorrect);
+    $('stars').textContent = '⭐'.repeat(stars);
+    $('done-title').textContent = DONE_TITLES[stars];
+    $('score').textContent = `${firstTryCorrect} of ${QUESTIONS_PER_SESSION} right on the first try`;
+    show('done');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!ui.screens.quiz.classList.contains('active')) return;
+    if (/^\d$/.test(e.key)) pressKey(e.key);
+    else if (e.key === 'Backspace') pressKey('back');
+    else if (e.key === 'Enter') pressKey('go');
+  });
+
+  $('quit').addEventListener('click', goHome);
+  $('again').addEventListener('click', () => startSession(state.level));
+  $('home-btn').addEventListener('click', goHome);
+
+  renderLevels();
+  renderKeypad();
+</script>
+</body>
+</html>
