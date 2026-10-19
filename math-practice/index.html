@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -68,9 +69,25 @@
     padding: 28px 22px;
     text-align: center;
     margin-bottom: 20px;
+    position: relative;
   }
   .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.1; }
   .hero p { font-size: 18px; opacity: 0.85; margin-top: 6px; }
+  .star-total {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 14px; padding: 8px 22px;
+    background: rgba(255, 255, 255, 0.16); border-radius: 999px;
+  }
+  .star-total-num { font-size: 52px; font-weight: 700; line-height: 1; }
+  .star-total-icon { font-size: 40px; line-height: 1; }
+  .hero .star-total-label { margin-top: 6px; font-size: 18px; }
+  .section-label { font-size: 20px; font-weight: 600; color: var(--muted); margin: 0 4px 10px; }
+  .sound-toggle {
+    position: absolute; top: 10px; right: 10px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    font-size: 22px;
+  }
 
   .levels { display: grid; gap: 12px; }
 
@@ -93,6 +110,43 @@
   .level-example { font-size: 18px; color: var(--muted); white-space: nowrap; }
   .level .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
   .level-left { display: flex; align-items: center; gap: 12px; }
+  .level-best { display: block; font-size: 18px; letter-spacing: 2px; line-height: 1; margin-top: 2px; color: var(--line); }
+  .level-best .earned { color: var(--gold); }
+
+  .home-links { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .home-link {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-height: 88px; padding: 12px 8px;
+    background: #fff6dd; border: 3px solid #ffe4a1; border-radius: 18px;
+    font-size: 20px; font-weight: 600;
+  }
+  .home-link:active { transform: scale(0.97); }
+  .home-link .icon { font-size: 30px; line-height: 1; }
+  .home-link .count-pill { font-size: 16px; color: #b07a00; }
+
+  /* ---------- Sticker book + Activity ---------- */
+  .page-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .page-head h2 { font-size: 30px; font-weight: 700; }
+  .page-sub { color: var(--muted); font-size: 18px; margin-bottom: 16px; }
+
+  .day-list { display: grid; gap: 10px; }
+  .day-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 18px;
+    background: var(--card); border: 3px solid var(--line); border-radius: 18px;
+  }
+  .day-name { font-size: 22px; font-weight: 600; }
+  .day-rounds { font-size: 16px; color: var(--muted); }
+  .day-stars { font-size: 26px; font-weight: 700; white-space: nowrap; }
+  .empty-note { text-align: center; color: var(--muted); font-size: 20px; padding: 40px 12px; }
+  .sticker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .sticker-tile {
+    aspect-ratio: 1; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--card); border: 3px solid var(--line);
+    font-size: 40px;
+  }
+  .sticker-tile.missing { color: var(--line); font-size: 30px; font-weight: 700; background: transparent; border-style: dashed; }
 
   /* ---------- Quiz ---------- */
   .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -161,8 +215,29 @@
   /* ---------- Done ---------- */
   .done { justify-content: center; text-align: center; }
   .stars { font-size: 56px; letter-spacing: 4px; margin-bottom: 8px; }
+  .star { display: inline-block; opacity: 0.18; filter: grayscale(1); }
+  .star.earned { opacity: 1; filter: none; animation: pop 0.45s ease-out; }
+  .new-best { display: inline-block; min-height: 30px; margin-bottom: 6px; font-size: 20px; font-weight: 600; color: #b07a00; }
+  .reward {
+    visibility: hidden;
+    background: #fff6dd; border: 3px solid #ffe4a1; border-radius: 20px;
+    padding: 12px; margin-bottom: 16px;
+  }
+  .reward.shown { visibility: visible; animation: pop 0.5s ease-out; }
+  .reward-label { font-size: 20px; font-weight: 600; color: #b07a00; }
+  .reward-sticker { font-size: 72px; line-height: 1.2; }
+
+  @keyframes pop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+  }
   .done h2 { font-size: 40px; font-weight: 700; }
-  .score { font-size: 24px; color: var(--muted); margin: 8px 0 28px; }
+  .done-message { font-size: 24px; font-weight: 600; color: var(--purple); margin-bottom: 20px; line-height: 1.25; }
+  .score { font-size: 24px; color: var(--muted); margin: 8px 0 4px; }
+  .done-total { font-size: 22px; font-weight: 600; margin-bottom: 10px; }
+  .done-total .num { display: inline-block; }
+  .done-total .num.bump { animation: pop 0.45s ease-out; }
   .big-btn {
     display: block; width: 100%;
     min-height: 60px; border-radius: 18px;
@@ -177,10 +252,38 @@
 
 <section class="screen active" id="home">
   <div class="hero">
+    <button class="sound-toggle" id="sound-toggle"></button>
     <h1>Math Practice</h1>
-    <p>Pick a level!</p>
+    <div class="star-total">
+      <span class="star-total-num" id="star-total"></span>
+      <span class="star-total-icon" aria-hidden="true">⭐</span>
+    </div>
+    <p class="star-total-label">stars earned</p>
   </div>
+  <div class="section-label">Pick a level!</div>
   <div class="levels" id="levels"></div>
+  <div class="home-links">
+    <button class="home-link" id="sticker-book-btn"></button>
+    <button class="home-link" id="activity-btn"></button>
+  </div>
+</section>
+
+<section class="screen" id="stickers">
+  <div class="page-head">
+    <button class="quit" id="book-back" aria-label="Back to levels">&times;</button>
+    <h2>My Stickers</h2>
+  </div>
+  <div class="page-sub" id="book-count"></div>
+  <div class="sticker-grid" id="sticker-grid"></div>
+</section>
+
+<section class="screen" id="activity">
+  <div class="page-head">
+    <button class="quit" id="activity-back" aria-label="Back to levels">&times;</button>
+    <h2>Activity</h2>
+  </div>
+  <div class="page-sub" id="activity-sub"></div>
+  <div class="day-list" id="day-list"></div>
 </section>
 
 <section class="screen" id="quiz">
@@ -201,6 +304,13 @@
   <div class="stars" id="stars"></div>
   <h2 id="done-title"></h2>
   <div class="score" id="score"></div>
+  <div class="done-total">Total: <span class="num" id="done-total"></span> ⭐</div>
+  <div><span class="new-best" id="new-best"></span></div>
+  <div class="reward" id="reward">
+    <div class="reward-label" id="reward-label"></div>
+    <div class="reward-sticker" id="reward-sticker"></div>
+  </div>
+  <div class="done-message" id="done-message"></div>
   <button class="big-btn primary" id="again">Play again</button>
   <button class="big-btn secondary" id="home-btn">Pick a level</button>
 </section>
@@ -209,6 +319,17 @@
   const QUESTIONS_PER_SESSION = 10;
   const TRIES_PER_QUESTION = 2;
   const MAX_ANSWER_DIGITS = 3;
+  const MAX_STARS = 3;
+  const STARS_FOR_STICKER = 2;
+  const STORAGE_KEY = 'math-practice:v1';
+  const MAX_SAVED_ROUNDS = 2000;
+
+  const STICKERS = Object.freeze([
+    '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
+    '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🦄', '🐝',
+    '🦋', '🐞', '🐢', '🐙', '🦑', '🦀', '🐠', '🐬', '🐳', '🦈',
+    '🦒', '🐘', '🦔', '🦥', '🦦', '🦩', '🦚', '🦜', '🐉', '🦖',
+  ]);
 
   function randInt(min, max) {
     return min + Math.floor(Math.random() * (max - min + 1));
@@ -230,28 +351,36 @@
     return pairWhere(() => [randInt(min, max), 0], a => a % 10 !== 0)[0];
   }
 
+  // `alias` is the level's permanent saved-data key and is never shown. Changing one orphans
+  // that level's saved stars and round history, so rename `name` freely but leave `alias` alone.
   const LEVELS = [
     {
+      alias: 'add-1digit-1digit-sum-to-10',
       name: 'Easy', example: '7 + 2', color: '#22b573',
       make: () => pairWhere(() => [randInt(1, 9), randInt(1, 9)], (a, b) => a + b <= 10),
     },
     {
+      alias: 'add-1digit-1digit-sum-over-10',
       name: 'Medium', example: '8 + 5', color: '#3fa7f5',
       make: () => pairWhere(() => [randInt(2, 9), randInt(2, 9)], (a, b) => a + b > 10),
     },
     {
+      alias: 'add-teen-1digit-sum-to-20',
       name: 'Hard', example: '12 + 7', color: '#ffb627',
       make: () => pairWhere(() => [randInt(10, 19), randInt(1, 9)], (a, b) => a + b <= 20),
     },
     {
+      alias: 'add-teen-1digit-sum-over-20',
       name: 'Extra Hard', example: '15 + 8', color: '#ff8a3d',
       make: () => pairWhere(() => [randInt(12, 19), randInt(2, 9)], (a, b) => a + b > 20),
     },
     {
+      alias: 'add-teen-teen',
       name: 'Super Hard', example: '12 + 17', color: '#ef5a5a',
       make: () => [randInt(10, 19), randInt(10, 19)],
     },
     {
+      alias: 'add-2digit-1digit-make-next-ten',
       name: 'Tens Easy', example: '23 + 7', color: '#a25ce8',
       make: () => {
         const a = twoDigitNotEndingInZero(11, 99);
@@ -259,6 +388,7 @@
       },
     },
     {
+      alias: 'add-2digit-2digit-make-ten',
       name: 'Tens Medium', example: '61 + 29', color: '#6c4ee0',
       make: () => {
         // b's ones digit completes a's to 10, and the total stays at or under 100.
@@ -286,10 +416,198 @@
     return problems;
   }
 
+  function longestRightRun(results) {
+    let longest = 0;
+    let current = 0;
+    for (const result of results) {
+      current = result === 'right' ? current + 1 : 0;
+      longest = Math.max(longest, current);
+    }
+    return longest;
+  }
+
+  // The device's local calendar date, so a day streak follows her bedtime, not UTC.
+  function localDay(date) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  }
+
   function starsFor(firstTryCorrect) {
     if (firstTryCorrect === QUESTIONS_PER_SESSION) return 3;
     if (firstTryCorrect >= 7) return 2;
     return 1;
+  }
+
+  // Shown in order, one per round, looping back to the start; see `messageCursor` in saved data.
+  const MESSAGE_SETS = Object.freeze({
+    silly: Object.freeze([
+      "Your brain just did a backflip!",
+      "The numbers are cheering for you!",
+      "A unicorn just gave you a thumbs up! 🦄",
+      "Even the calculator is jealous!",
+      "Your pencil is doing a happy dance!",
+      "7 ate 9, but you ate those problems!",
+      "Somewhere, a math teacher just smiled!",
+      "Your brain needs sunglasses, it's so bright! 😎",
+      "The number 10 wants your autograph!",
+      "A dinosaur would be SO impressed! 🦖",
+      "Plus signs everywhere are celebrating! ➕",
+      "Breaking news: kid is a math genius! 📰",
+      "Your brain is sparkling! ✨",
+      "Achoo! Sorry, I'm allergic to how good you are!",
+      "The robots want to know your secret! 🤖",
+      "A llama just spit out its drink in surprise! 🦙",
+      "Your brain is so big it needs a bigger hat! 🎩",
+      "The zeros are doing cartwheels! 0️⃣",
+      "A pirate wants you to count his treasure! 🏴‍☠️",
+      "Alert! Too much awesome detected! 🚨",
+    ]),
+    growth: Object.freeze([
+      "Hard problems make your brain grow!",
+      "Tricky ones are how you get better!",
+      "Every try counts!",
+      "You're learning, and that's the whole point!",
+      "Next round, even better!",
+      "Your brain is doing push-ups! 💪",
+      "Mistakes are proof you're trying!",
+      "You can't do it YET, but you're getting there!",
+      "Even experts started as beginners!",
+      "Brains grow when things are hard!",
+      "Oops means you're learning something new!",
+      "Keep going, you're building math muscles!",
+      "Hard work beats easy every time!",
+      "Practice is how pros get good!",
+      "Every mistake teaches your brain a trick!",
+      "You showed up and tried. That's huge!",
+      "Slow and steady wins the race! 🐢",
+      "One more round makes you stronger!",
+      "Your brain is leveling up! 🎮",
+      "Tough rounds make the best mathematicians!",
+    ]),
+  });
+
+  function messageSetFor(stars) {
+    return stars === MAX_STARS ? 'silly' : 'growth';
+  }
+
+  function pickSticker(owned) {
+    const unowned = STICKERS.filter(sticker => !owned.includes(sticker));
+    const pool = unowned.length ? unowned : STICKERS;
+    return pool[randInt(0, pool.length - 1)];
+  }
+
+  // ---------- Saved progress (per device; the page still works if storage is blocked) ----------
+
+  // Saved shape (bump `schemaVersion` and migrate in loadProgress if this changes incompatibly):
+  //   totalStars: all-time stars; kept as a counter because `rounds` gets trimmed
+  //   days:      { 'YYYY-MM-DD' local: { stars, rounds } }; never trimmed, ~40 bytes a day
+  //   bestStars: { [level alias]: 1–3 }
+  //   stickers:  emoji in the order earned
+  //   rounds:    oldest first, capped at MAX_SAVED_ROUNDS —
+  //              { day: 'YYYY-MM-DD' local, finishedAt: epoch ms, level: alias,
+  //                stars, firstTryCorrect, longestRun, sticker (null below STARS_FOR_STICKER), isNewSticker }
+  //   messageCursor: { silly, growth }: rounds that have used each set; next line is cursor % length
+  //   soundOn:   boolean
+  function loadProgress() {
+    const fresh = { schemaVersion: 1, totalStars: 0, days: {}, bestStars: {}, stickers: [], rounds: [], messageCursor: { silly: 0, growth: 0 }, soundOn: true };
+    try {
+      return { ...fresh, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) };
+    } catch {
+      return fresh;
+    }
+  }
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    } catch {}
+  }
+
+  const progress = loadProgress();
+
+  function recordRound(levelAlias, results) {
+    const firstTryCorrect = results.filter(r => r === 'right').length;
+    const stars = starsFor(firstTryCorrect);
+    const previousBest = progress.bestStars[levelAlias] ?? 0;
+    const earnedSticker = stars >= STARS_FOR_STICKER;
+    const sticker = earnedSticker ? pickSticker(progress.stickers) : null;
+    const isNewSticker = earnedSticker && !progress.stickers.includes(sticker);
+    const messageSet = messageSetFor(stars);
+    const messages = MESSAGE_SETS[messageSet];
+    const cursor = progress.messageCursor[messageSet] ?? 0;
+    const message = messages[cursor % messages.length];
+    const now = new Date();
+    const day = localDay(now);
+    const dayTotals = progress.days[day] ?? { stars: 0, rounds: 0 };
+
+    progress.totalStars += stars;
+    progress.days[day] = { stars: dayTotals.stars + stars, rounds: dayTotals.rounds + 1 };
+    if (stars > previousBest) progress.bestStars[levelAlias] = stars;
+    if (isNewSticker) progress.stickers.push(sticker);
+    progress.messageCursor[messageSet] = cursor + 1;
+    progress.rounds.push({
+      day,
+      finishedAt: now.getTime(),
+      level: levelAlias,
+      stars,
+      firstTryCorrect,
+      longestRun: longestRightRun(results),
+      sticker,
+      isNewSticker,
+    });
+    progress.rounds = progress.rounds.slice(-MAX_SAVED_ROUNDS);
+    saveProgress();
+    return { firstTryCorrect, stars, beatOldBest: previousBest > 0 && stars > previousBest, sticker, isNewSticker, message };
+  }
+
+  // ---------- Sound (synthesized, so there are no audio files to load) ----------
+
+  // Each note is [frequencyHz, startSec, durationSec].
+  const SOUNDS = Object.freeze({
+    right: [[880, 0, 0.15], [1318.5, 0.08, 0.3]],
+    wrong: [[220, 0, 0.18], [185, 0.12, 0.25]],
+    star1: [[659.25, 0, 0.35]],
+    star2: [[783.99, 0, 0.35]],
+    star3: [[1046.5, 0, 0.45]],
+    fanfare: [[523.25, 0, 0.15], [659.25, 0.12, 0.15], [783.99, 0.24, 0.15], [1046.5, 0.36, 0.7]],
+    sticker: [[1046.5, 0, 0.12], [1318.5, 0.1, 0.12], [1568, 0.2, 0.4]],
+  });
+
+  let audioCtx = null;
+
+  // iOS only lets audio start from inside a user gesture, so this runs on every tap.
+  function unlockAudio() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    audioCtx ??= new AudioContextClass();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playSound(name) {
+    if (!progress.soundOn || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    for (const [freq, start, duration] of SOUNDS[name]) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + start);
+      gain.gain.exponentialRampToValueAtTime(0.3, now + start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + start + duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now + start);
+      osc.stop(now + start + duration + 0.05);
+    }
+  }
+
+  function fireConfetti(stars) {
+    if (!window.confetti) return; // CDN unavailable offline
+    const burst = { particleCount: 50 * stars, spread: 60 + 25 * stars, origin: { y: 0.55 }, disableForReducedMotion: true };
+    confetti(burst);
+    if (stars === MAX_STARS) {
+      confetti({ ...burst, angle: 60, origin: { x: 0, y: 0.7 } });
+      confetti({ ...burst, angle: 120, origin: { x: 1, y: 0.7 } });
+    }
   }
 
   const CHEERS = ['Great job!', 'You got it!', 'Awesome!', 'Nice!', 'Super!', 'Yes!'];
@@ -298,7 +616,7 @@
   const $ = id => document.getElementById(id);
 
   const ui = {
-    screens: { home: $('home'), quiz: $('quiz'), done: $('done') },
+    screens: { home: $('home'), stickers: $('stickers'), activity: $('activity'), quiz: $('quiz'), done: $('done') },
     meter: $('meter'),
     count: $('count'),
     problem: $('problem'),
@@ -323,30 +641,125 @@
     state.pendingTimer = setTimeout(fn, delayMs);
   }
 
-  function goHome() {
-    clearTimeout(state.pendingTimer);
-    show('home');
-  }
-
   function show(name) {
     for (const [key, el] of Object.entries(ui.screens)) el.classList.toggle('active', key === name);
     window.scrollTo(0, 0);
   }
 
+  function bestStarsHtml(best) {
+    let html = '';
+    for (let i = 0; i < MAX_STARS; i++) html += `<span class="${i < best ? 'earned' : ''}">★</span>`;
+    return html;
+  }
+
   function renderLevels() {
     const list = $('levels');
+    list.innerHTML = '';
     LEVELS.forEach(level => {
+      const best = progress.bestStars[level.alias] ?? 0;
       const btn = document.createElement('button');
       btn.className = 'level';
       btn.innerHTML = `
         <span class="level-left">
           <span class="dot" style="background:${level.color}"></span>
-          <span class="level-name">${level.name}</span>
+          <span>
+            <span class="level-name">${level.name}</span>
+            <span class="level-best" aria-label="Best: ${best} stars">${bestStarsHtml(best)}</span>
+          </span>
         </span>
         <span class="level-example">${level.example}</span>`;
       btn.addEventListener('click', () => startSession(level));
       list.appendChild(btn);
     });
+  }
+
+  function renderSoundToggle() {
+    const btn = $('sound-toggle');
+    btn.textContent = progress.soundOn ? '🔊' : '🔇';
+    btn.setAttribute('aria-label', progress.soundOn ? 'Turn sound off' : 'Turn sound on');
+  }
+
+  function stickerCountText() {
+    return `${progress.stickers.length} of ${STICKERS.length}`;
+  }
+
+  function plural(count, word) {
+    return `${count} ${word}${count === 1 ? '' : 's'}`;
+  }
+
+  function renderHome() {
+    renderLevels();
+    renderSoundToggle();
+    $('star-total').textContent = progress.totalStars;
+    $('sticker-book-btn').innerHTML =
+      `<span class="icon">📒</span><span>My Stickers</span><span class="count-pill">${stickerCountText()}</span>`;
+    const daysPlayed = Object.keys(progress.days).length;
+    $('activity-btn').innerHTML =
+      `<span class="icon">📅</span><span>Activity</span><span class="count-pill">${plural(daysPlayed, 'day')}</span>`;
+  }
+
+  function goHome() {
+    clearTimeout(state.pendingTimer);
+    renderHome();
+    show('home');
+  }
+
+  function showStickerBook() {
+    const grid = $('sticker-grid');
+    grid.innerHTML = '';
+    for (const sticker of STICKERS) {
+      const owned = progress.stickers.includes(sticker);
+      const tile = document.createElement('div');
+      tile.className = owned ? 'sticker-tile' : 'sticker-tile missing';
+      tile.textContent = owned ? sticker : '?';
+      grid.appendChild(tile);
+    }
+    $('book-count').textContent = `You have ${stickerCountText()} stickers`;
+    show('stickers');
+  }
+
+  // Parsed as local midnight; `new Date('YYYY-MM-DD')` would be UTC and can land on the wrong day.
+  function dateFromDay(day) {
+    const [y, m, d] = day.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function dayLabel(day, today) {
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    if (day === localDay(today)) return 'Today';
+    if (day === localDay(yesterday)) return 'Yesterday';
+    return dateFromDay(day).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  function showActivity() {
+    const list = $('day-list');
+    list.innerHTML = '';
+    // 'YYYY-MM-DD' sorts chronologically as plain text.
+    const days = Object.keys(progress.days).sort().reverse();
+    const today = new Date();
+    for (const day of days) {
+      const { stars, rounds } = progress.days[day];
+      const row = document.createElement('div');
+      row.className = 'day-row';
+      row.innerHTML = `
+        <div>
+          <div class="day-name">${dayLabel(day, today)}</div>
+          <div class="day-rounds">${plural(rounds, 'round')}</div>
+        </div>
+        <div class="day-stars">${stars} ⭐</div>`;
+      list.appendChild(row);
+    }
+    if (!days.length) list.innerHTML = '<div class="empty-note">No rounds yet. Pick a level to start!</div>';
+    $('activity-sub').textContent = `${plural(progress.totalStars, 'star')} on ${plural(days.length, 'day')}`;
+    show('activity');
+  }
+
+  function toggleSound() {
+    progress.soundOn = !progress.soundOn;
+    saveProgress();
+    renderSoundToggle();
+    playSound('right');
   }
 
   function renderKeypad() {
@@ -428,16 +841,19 @@
 
     if (isRight) {
       renderAnswer('right');
+      playSound('right');
       setFeedback(CHEERS[randInt(0, CHEERS.length - 1)], 'right');
       finishQuestion(firstTry ? 'right' : 'wrong', 900);
     } else if (state.triesLeft > 0) {
       renderAnswer('wrong');
+      playSound('wrong');
       setFeedback('Try again!', 'wrong');
       setLocked(true);
       later(() => { state.typed = ''; renderAnswer(); setLocked(false); }, 700);
     } else {
       state.typed = String(correct);
       renderAnswer('right');
+      playSound('wrong');
       setFeedback(`It's ${correct}`, 'wrong');
       finishQuestion('wrong', 2000);
     }
@@ -454,14 +870,67 @@
     }, delayMs);
   }
 
-  function showDone() {
-    const firstTryCorrect = state.results.filter(r => r === 'right').length;
-    const stars = starsFor(firstTryCorrect);
-    $('stars').textContent = '⭐'.repeat(stars);
-    $('done-title').textContent = DONE_TITLES[stars];
-    $('score').textContent = `${firstTryCorrect} of ${QUESTIONS_PER_SESSION} right on the first try`;
-    show('done');
+  function renderDone(round) {
+    $('done-total').textContent = progress.totalStars - round.stars;
+    $('done-total').classList.remove('bump');
+    $('stars').innerHTML = '<span class="star">⭐</span>'.repeat(MAX_STARS);
+    $('done-title').textContent = DONE_TITLES[round.stars];
+    $('done-message').textContent = round.message;
+    $('score').textContent = `${round.firstTryCorrect} of ${QUESTIONS_PER_SESSION} right on the first try`;
+    $('new-best').textContent = '';
+    $('reward').classList.remove('shown');
   }
+
+  // Stars pop in one at a time, then fanfare + confetti, then the sticker reveal.
+  // Every step goes through later() so leaving the screen cancels the rest.
+  function celebrate(round) {
+    const starEls = $('stars').children;
+    const revealStar = shown => {
+      if (shown === round.stars) return later(() => finale(round), 350);
+      starEls[shown].classList.add('earned');
+      playSound(`star${shown + 1}`);
+      later(() => revealStar(shown + 1), 550);
+    };
+    later(() => revealStar(0), 400);
+  }
+
+  function finale(round) {
+    playSound('fanfare');
+    fireConfetti(round.stars);
+    $('done-total').textContent = progress.totalStars;
+    $('done-total').classList.add('bump');
+    if (round.beatOldBest) $('new-best').textContent = `🏆 New best on ${state.level.name}!`;
+    later(() => {
+      $('reward-sticker').textContent = round.sticker ?? '';
+      if (round.sticker) {
+        $('reward-label').textContent = round.isNewSticker ? 'New sticker!' : 'Bonus sticker!';
+        playSound('sticker');
+      } else {
+        $('reward-label').textContent = 'Try again to win a sticker!';
+      }
+      $('reward').classList.add('shown');
+    }, 900);
+  }
+
+  function showDone() {
+    const round = recordRound(state.level.alias, state.results);
+    renderDone(round);
+    show('done');
+    celebrate(round);
+  }
+
+  // Console-only testing shortcut. It records a real round, so it changes saved stars and stickers.
+  window.cheat = rightCount => {
+    if (!ui.screens.quiz.classList.contains('active')) return 'Start a round first.';
+    if (!Number.isInteger(rightCount) || rightCount < 0 || rightCount > QUESTIONS_PER_SESSION) {
+      return `Pass a whole number from 0 to ${QUESTIONS_PER_SESSION}.`;
+    }
+    clearTimeout(state.pendingTimer);
+    setLocked(true);
+    state.results = Array.from({ length: QUESTIONS_PER_SESSION }, (_, i) => (i < rightCount ? 'right' : 'wrong'));
+    showDone();
+    return `Finished with ${rightCount} of ${QUESTIONS_PER_SESSION} right.`;
+  };
 
   document.addEventListener('keydown', e => {
     if (!ui.screens.quiz.classList.contains('active')) return;
@@ -470,11 +939,19 @@
     else if (e.key === 'Enter') pressKey('go');
   });
 
+  document.addEventListener('click', unlockAudio, true);
+  document.addEventListener('keydown', unlockAudio, true);
+
   $('quit').addEventListener('click', goHome);
   $('again').addEventListener('click', () => startSession(state.level));
   $('home-btn').addEventListener('click', goHome);
+  $('sound-toggle').addEventListener('click', toggleSound);
+  $('sticker-book-btn').addEventListener('click', showStickerBook);
+  $('book-back').addEventListener('click', goHome);
+  $('activity-btn').addEventListener('click', showActivity);
+  $('activity-back').addEventListener('click', goHome);
 
-  renderLevels();
+  renderHome();
   renderKeypad();
 </script>
 </body>
