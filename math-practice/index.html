@@ -73,14 +73,18 @@
   }
   .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.1; }
   .hero p { font-size: 18px; opacity: 0.85; margin-top: 6px; }
-  .star-total {
-    display: inline-flex; align-items: center; gap: 10px;
-    margin-top: 14px; padding: 8px 22px;
-    background: rgba(255, 255, 255, 0.16); border-radius: 999px;
+  .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .stat {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 96px; padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.16); border-radius: 22px;
+    color: #fff;
   }
-  .star-total-num { font-size: 52px; font-weight: 700; line-height: 1; }
-  .star-total-icon { font-size: 40px; line-height: 1; }
-  .hero .star-total-label { margin-top: 6px; font-size: 18px; }
+  button.stat:active { transform: scale(0.96); }
+  .stat-row { display: flex; align-items: center; gap: 8px; }
+  .stat-num { font-size: 44px; font-weight: 700; line-height: 1; }
+  .stat-icon { font-size: 34px; line-height: 1; }
+  .stat-label { font-size: 17px; opacity: 0.85; margin-top: 6px; }
   .section-label { font-size: 20px; font-weight: 600; color: var(--muted); margin: 0 4px 10px; }
   .sound-toggle {
     position: absolute; top: 10px; right: 10px;
@@ -254,11 +258,22 @@
   <div class="hero">
     <button class="sound-toggle" id="sound-toggle"></button>
     <h1>Math Practice</h1>
-    <div class="star-total">
-      <span class="star-total-num" id="star-total"></span>
-      <span class="star-total-icon" aria-hidden="true">⭐</span>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-row">
+          <span class="stat-num" id="star-total"></span>
+          <span class="stat-icon" aria-hidden="true">⭐</span>
+        </span>
+        <span class="stat-label">stars earned</span>
+      </div>
+      <button class="stat" id="sticker-total-btn" aria-label="See my stickers">
+        <span class="stat-row">
+          <span class="stat-num" id="sticker-total"></span>
+          <span class="stat-icon" id="sticker-total-icon" aria-hidden="true"></span>
+        </span>
+        <span class="stat-label">stickers earned ›</span>
+      </button>
     </div>
-    <p class="star-total-label">stars earned</p>
   </div>
   <div class="section-label">Pick a level!</div>
   <div class="levels" id="levels"></div>
@@ -691,6 +706,8 @@
     renderLevels();
     renderSoundToggle();
     $('star-total').textContent = progress.totalStars;
+    $('sticker-total').textContent = progress.stickers.length;
+    $('sticker-total-icon').textContent = progress.stickers.at(-1) ?? '📒';
     $('sticker-book-btn').innerHTML =
       `<span class="icon">📒</span><span>My Stickers</span><span class="count-pill">${stickerCountText()}</span>`;
     const daysPlayed = Object.keys(progress.days).length;
@@ -947,6 +964,7 @@
   $('home-btn').addEventListener('click', goHome);
   $('sound-toggle').addEventListener('click', toggleSound);
   $('sticker-book-btn').addEventListener('click', showStickerBook);
+  $('sticker-total-btn').addEventListener('click', showStickerBook);
   $('book-back').addEventListener('click', goHome);
   $('activity-btn').addEventListener('click', showActivity);
   $('activity-back').addEventListener('click', goHome);
