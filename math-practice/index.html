@@ -157,12 +157,25 @@
   .info-card p + ul, .info-card ul + p { margin-top: 8px; }
   .info-card ul { padding-left: 22px; display: grid; gap: 6px; }
   .empty-note { text-align: center; color: var(--muted); font-size: 20px; padding: 40px 12px; }
+  .book-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .book-tab {
+    min-height: 44px; padding: 0 14px; border-radius: 999px;
+    background: var(--card); border: 3px solid var(--line);
+    font-size: 17px; font-weight: 600;
+  }
+  .book-tab.active { background: var(--purple); border-color: var(--purple); color: #fff; }
   .sticker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .sticker-tile {
     aspect-ratio: 1; border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
     background: var(--card); border: 3px solid var(--line);
     font-size: 40px;
+  }
+  .sticker-tile.wiggle { animation: wiggle 0.5s ease-in-out; }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0) scale(1); }
+    25% { transform: rotate(-12deg) scale(1.15); }
+    75% { transform: rotate(12deg) scale(1.15); }
   }
   .sticker-tile.missing { color: var(--line); font-size: 30px; font-weight: 700; background: transparent; border-style: dashed; }
 
@@ -237,7 +250,6 @@
   .star { display: inline-block; opacity: 0.18; filter: grayscale(1); }
   .star.earned { opacity: 1; filter: none; animation: pop 0.45s ease-out; }
   .medal-note { min-height: 30px; margin-bottom: 8px; font-size: 20px; font-weight: 600; color: #b07a00; line-height: 1.35; }
-  .medal-note.new-medal { font-size: 24px; animation: pop 0.5s ease-out; }
   .reward {
     visibility: hidden;
     background: #fff6dd; border: 3px solid #ffe4a1; border-radius: 20px;
@@ -245,7 +257,9 @@
   }
   .reward.shown { visibility: visible; animation: pop 0.5s ease-out; }
   .reward-label { font-size: 20px; font-weight: 600; color: #b07a00; }
-  .reward-sticker { font-size: 72px; line-height: 1.2; }
+  .reward-prize { font-size: 72px; line-height: 1.2; }
+  .reward-note { font-size: 20px; font-weight: 600; color: var(--purple); }
+  .reward-note:empty { display: none; }
 
   @keyframes pop {
     0% { transform: scale(0); }
@@ -313,6 +327,7 @@
     <button class="quit" id="book-back" aria-label="Back to levels">&times;</button>
     <h2>My Stickers</h2>
   </div>
+  <div class="book-tabs" id="book-tabs"></div>
   <div class="page-sub" id="book-count"></div>
   <div class="sticker-grid" id="sticker-grid"></div>
 </section>
@@ -348,7 +363,8 @@
   <div class="medal-note" id="medal-note"></div>
   <div class="reward" id="reward">
     <div class="reward-label" id="reward-label"></div>
-    <div class="reward-sticker" id="reward-sticker"></div>
+    <div class="reward-prize" id="reward-prize"></div>
+    <div class="reward-note" id="reward-note"></div>
   </div>
   <div class="done-message" id="done-message"></div>
   <button class="big-btn primary" id="again">Play again</button>
@@ -360,19 +376,37 @@
   const TRIES_PER_QUESTION = 2;
   const MAX_ANSWER_DIGITS = 3;
   const MAX_STARS = 3;
-  const STARS_FOR_STICKER = 2;
   const GOOD_ROUND_STARS = 2;
+  const STICKER_CHANCE_ON_PERFECT = 0.5;
   const MAX_TRICKY_PER_ROUND = 4;
   const TRICKY_BEATEN_AFTER = 3; // first-try rights in a row
   const STORAGE_KEY = 'math-practice:v1';
   const MAX_SAVED_ROUNDS = 2000;
 
-  const STICKERS = Object.freeze([
-    '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
-    '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🦄', '🐝',
-    '🦋', '🐞', '🐢', '🐙', '🦑', '🦀', '🐠', '🐬', '🐳', '🦈',
-    '🦒', '🐘', '🦔', '🦥', '🦦', '🦩', '🦚', '🦜', '🐉', '🦖',
+  // Filled in order: stickers come from the first book she hasn't finished. Saved data stores
+  // only the emoji, so books can be added at the end, but an emoji must never be in two books.
+  const STICKER_BOOKS = Object.freeze([
+    { name: 'Animals', icon: '🐾', stickers: Object.freeze([
+      '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
+      '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🦄', '🐝',
+      '🦋', '🐞', '🐢', '🐙', '🦑', '🦀', '🐠', '🐬', '🐳', '🦈',
+      '🦒', '🐘', '🦔', '🦥', '🦦', '🦩', '🦚', '🦜', '🐉', '🦖',
+    ]) },
+    { name: 'Yummy Food', icon: '🍕', stickers: Object.freeze([
+      '🍎', '🍌', '🍇', '🍓', '🍉', '🍊', '🍍', '🥭', '🍒', '🥝',
+      '🍋', '🫐', '🥥', '🥕', '🌽', '🥦', '🥑', '🍅', '🥔', '🍕',
+      '🍔', '🌭', '🌮', '🍟', '🍝', '🍣', '🍙', '🥟', '🥞', '🧇',
+      '🥐', '🧀', '🍦', '🍩', '🍪', '🎂', '🧁', '🍫', '🍭', '🍿',
+    ]) },
+    { name: 'Space & Things That Go', icon: '🚀', stickers: Object.freeze([
+      '🚀', '🛸', '🛰️', '🌍', '🌕', '🌙', '☀️', '🪐', '☄️', '🌌',
+      '🔭', '🧑‍🚀', '🚗', '🚕', '🚌', '🏎️', '🚓', '🚑', '🚒', '🚐',
+      '🛻', '🚚', '🚜', '🛺', '🛵', '🏍️', '🚲', '🛴', '🛹', '🚂',
+      '🚄', '✈️', '🚁', '🎈', '🪂', '🚡', '🛶', '⛵', '🚤', '🚢',
+    ]) },
   ]);
+
+  const STICKERS = Object.freeze(STICKER_BOOKS.flatMap(book => book.stickers));
 
   function randInt(min, max) {
     return min + Math.floor(Math.random() * (max - min + 1));
@@ -714,9 +748,110 @@
     return stars === MAX_STARS ? 'silly' : 'growth';
   }
 
+  // Pentatonic, so any random walk over it sounds pleasant.
+  const JINGLE_SCALE = Object.freeze([523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51]);
+
+  // Small seeded random-number generator (mulberry32), so a sticker plays the same jingle every time.
+  function seededRandom(seed) {
+    let a = seed;
+    return () => {
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // FNV-1a, a tiny string hash: turns an emoji into a stable number.
+  function hashText(text) {
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    return hash >>> 0;
+  }
+
+  // Seeded by the emoji itself, so a sticker keeps its jingle wherever it sits in STICKER_BOOKS.
+  // The salt was picked so every current sticker gets different notes; recheck when adding a book.
+  const JINGLE_SALT = 's211';
+
+  const NOTE_HZ = Object.freeze({
+    C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392, 'G#4': 415.3, A4: 440, 'A#4': 466.16, B4: 493.88,
+    C5: 523.25, D5: 587.33, 'D#5': 622.25, E5: 659.25, F5: 698.46, 'F#5': 739.99, G5: 783.99, 'G#5': 830.61,
+    C6: 1046.5,
+  });
+
+  // `melody` is space-separated `note:beats`, e.g. 'D4:1 F4:1 D5:3'.
+  function tune(secondsPerBeat, melody) {
+    let start = 0;
+    return melody.split(' ').map(token => {
+      const [name, beats] = token.split(':');
+      const length = Number(beats) * secondsPerBeat;
+      const note = [NOTE_HZ[name], start, length * 0.9];
+      start += length;
+      return note;
+    });
+  }
+
+  // Hand-picked tunes that replace a sticker's generated jingle: short Legend of Zelda snippets.
+  const SPECIAL_JINGLES = Object.freeze({
+    '🐼': tune(0.11, 'G5:1 F#5:1 D#5:1 A4:1 G#4:1 E5:1 G#5:1 C6:4'), // secret discovered
+    '🐸': tune(0.14, 'D4:1 F4:1 D5:3 D4:1 F4:1 D5:3 E5:2 F5:1 E5:1 F5:1 E5:1 C5:1 A4:3'), // Song of Storms
+    '🦋': tune(0.15, 'F4:1 A4:1 B4:2 F4:1 A4:1 B4:2 F4:1 A4:1 B4:1 E5:1 D5:2'), // Saria's Song
+    '🦈': tune(0.2, 'A4:1 A#4:1 B4:1 C5:4'), // treasure chest item fanfare
+    '🦄': tune(0.2, 'D5:1 B4:1 A4:3 D5:1 B4:1 A4:3'), // Epona's Song
+    '🦚': tune(0.18, 'B4:2 D5:1 A4:3 B4:2 D5:1 A4:3'), // Zelda's Lullaby
+    '🐢': tune(0.18, 'A4:2 D4:4 F4:2 A4:2 D4:4 F4:2'), // Song of Time
+    '🐔': tune(0.13, 'A4:1 F4:1 D5:2 A4:1 F4:1 D5:3'), // Sun's Song
+    '🐉': tune(0.15, 'A#4:4 F4:3 A#4:1 A#4:0.5 C5:0.5 D5:0.5 D#5:0.5 F5:4'), // NES overworld theme
+  });
+
+  function jingleFor(sticker) {
+    if (sticker in SPECIAL_JINGLES) return SPECIAL_JINGLES[sticker];
+    const random = seededRandom(hashText(JINGLE_SALT + sticker));
+    const noteCount = 4 + Math.floor(random() * 3);
+    let step = Math.floor(random() * JINGLE_SCALE.length);
+    let start = 0;
+    const notes = [];
+    for (let i = 0; i < noteCount; i++) {
+      const isLast = i === noteCount - 1;
+      const duration = isLast ? 0.4 : random() < 0.5 ? 0.12 : 0.22;
+      notes.push([JINGLE_SCALE[step], start, duration]);
+      start += duration * 0.85;
+      const move = (random() < 0.5 ? -1 : 1) * (1 + Math.floor(random() * 2));
+      step = Math.min(JINGLE_SCALE.length - 1, Math.max(0, step + move));
+    }
+    return notes;
+  }
+
+  function ownedCountIn(book, owned) {
+    return book.stickers.filter(sticker => owned.includes(sticker)).length;
+  }
+
+  function isBookFull(book, owned) {
+    return ownedCountIn(book, owned) === book.stickers.length;
+  }
+
+  // The book she is filling now; null once every book is full.
+  function currentBookFor(owned) {
+    return STICKER_BOOKS.find(book => !isBookFull(book, owned)) ?? null;
+  }
+
+  function bookOf(sticker) {
+    return STICKER_BOOKS.find(book => book.stickers.includes(sticker));
+  }
+
+  // A medal round pays out the medal, never a sticker as well.
+  function winsSticker({ isFirstFinishOnLevel, stars, wonMedal }) {
+    if (wonMedal) return false;
+    if (isFirstFinishOnLevel) return true;
+    return stars === MAX_STARS && Math.random() < STICKER_CHANCE_ON_PERFECT;
+  }
+
   function pickSticker(owned) {
-    const unowned = STICKERS.filter(sticker => !owned.includes(sticker));
-    const pool = unowned.length ? unowned : STICKERS;
+    const book = currentBookFor(owned);
+    const pool = book ? book.stickers.filter(sticker => !owned.includes(sticker)) : STICKERS;
     return pool[randInt(0, pool.length - 1)];
   }
 
@@ -729,7 +864,7 @@
   //   stickers:  emoji in the order earned
   //   rounds:    oldest first, capped at MAX_SAVED_ROUNDS —
   //              { day: 'YYYY-MM-DD' local, finishedAt: epoch ms, level: alias,
-  //                stars, firstTryCorrect, longestRun, sticker (null below STARS_FOR_STICKER), isNewSticker }
+  //                stars, firstTryCorrect, longestRun, sticker (null when none was won), isNewSticker }
   //   medals:    { [level alias]: medals earned, 0–4 }; only goes up, so trimming `rounds` can't take one away
   //   trickyFacts: { [level alias]: { 'a+b': first-try rights since her last miss } };
   //              a fact is removed once that reaches TRICKY_BEATEN_AFTER
@@ -787,10 +922,9 @@
     const medalsBefore = medalsEarnedOn(levelAlias);
     const firstTryCorrect = results.filter(r => r === 'right').length;
     const stars = starsFor(firstTryCorrect);
+    // bestStars gets an entry on a level's first finished round and is never trimmed.
+    const isFirstFinishOnLevel = !(levelAlias in progress.bestStars);
     const previousBest = progress.bestStars[levelAlias] ?? 0;
-    const earnedSticker = stars >= STARS_FOR_STICKER;
-    const sticker = earnedSticker ? pickSticker(progress.stickers) : null;
-    const isNewSticker = earnedSticker && !progress.stickers.includes(sticker);
     const messageSet = messageSetFor(stars);
     const messages = MESSAGE_SETS[messageSet];
     const cursor = progress.messageCursor[messageSet] ?? 0;
@@ -802,21 +936,29 @@
     progress.totalStars += stars;
     progress.days[day] = { stars: dayTotals.stars + stars, rounds: dayTotals.rounds + 1 };
     if (stars > previousBest) progress.bestStars[levelAlias] = stars;
-    if (isNewSticker) progress.stickers.push(sticker);
     progress.messageCursor[messageSet] = cursor + 1;
-    progress.rounds.push({
+    const roundEntry = {
       day,
       finishedAt: now.getTime(),
       level: levelAlias,
       stars,
       firstTryCorrect,
       longestRun: longestRightRun(results),
-      sticker,
-      isNewSticker,
-    });
+      sticker: null,
+      isNewSticker: false,
+    };
+    progress.rounds.push(roundEntry);
     progress.rounds = progress.rounds.slice(-MAX_SAVED_ROUNDS);
+
+    // Medals are counted with this round included, and decide whether a sticker is won.
     const medalsAfter = medalsEarnedOn(levelAlias);
     progress.medals[levelAlias] = medalsAfter;
+    const wonMedal = medalsAfter > medalsBefore;
+    const sticker = winsSticker({ isFirstFinishOnLevel, stars, wonMedal }) ? pickSticker(progress.stickers) : null;
+    const isNewSticker = sticker !== null && !progress.stickers.includes(sticker);
+    if (isNewSticker) progress.stickers.push(sticker);
+    Object.assign(roundEntry, { sticker, isNewSticker });
+    const filledBook = isNewSticker && isBookFull(bookOf(sticker), progress.stickers) ? bookOf(sticker) : null;
     const trickyBeaten = updateTrickyFacts(levelAlias, problems, results);
     saveProgress();
     return {
@@ -824,8 +966,10 @@
       stars,
       sticker,
       isNewSticker,
+      filledBook,
+      openedBook: filledBook ? currentBookFor(progress.stickers) : null,
       message,
-      newMedal: medalsAfter > medalsBefore ? MEDALS[medalsAfter - 1] : null,
+      newMedal: wonMedal ? MEDALS[medalsAfter - 1] : null,
       medalGoal: nextMedalGoal(medalsAfter, level.name),
       trickyBeaten,
     };
@@ -856,9 +1000,13 @@
   }
 
   function playSound(name) {
+    playNotes(SOUNDS[name]);
+  }
+
+  function playNotes(notes) {
     if (!progress.soundOn || !audioCtx) return;
     const now = audioCtx.currentTime;
-    for (const [freq, start, duration] of SOUNDS[name]) {
+    for (const [freq, start, duration] of notes) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
@@ -947,7 +1095,9 @@
     const earned = medalsEarnedOn(level.alias);
     if (!earned) {
       const best = progress.bestStars[level.alias] ?? 0;
-      return `<span class="level-best" aria-label="Best: ${best} stars">${bestStarsHtml(best)}</span>`;
+      const stars = `<span class="level-best" aria-label="Best: ${best} stars">${bestStarsHtml(best)}</span>`;
+      const hasPlayed = best > 0;
+      return hasPlayed ? `${stars}<span class="level-medal-next">${nextMedalGoal(0, level.name)}</span>` : stars;
     }
     const medal = MEDALS[earned - 1];
     const nextGoal = earned === MEDALS.length ? "You've mastered this level!" : nextMedalGoal(earned, level.name);
@@ -986,8 +1136,10 @@
     btn.setAttribute('aria-label', progress.soundOn ? 'Turn sound off' : 'Turn sound on');
   }
 
-  function stickerCountText() {
-    return `${progress.stickers.length} of ${STICKERS.length}`;
+  function currentBookCountText() {
+    const book = currentBookFor(progress.stickers);
+    if (!book) return plural(progress.stickers.length, 'sticker');
+    return `${ownedCountIn(book, progress.stickers)} of ${book.stickers.length}`;
   }
 
   function plural(count, word) {
@@ -1001,7 +1153,7 @@
     $('sticker-total').textContent = progress.stickers.length;
     $('sticker-total-icon').textContent = progress.stickers.at(-1) ?? '📒';
     $('sticker-book-btn').innerHTML =
-      `<span class="icon">📒</span><span>My Stickers</span><span class="count-pill">${stickerCountText()}</span>`;
+      `<span class="icon">📒</span><span>My Stickers</span><span class="count-pill">${currentBookCountText()}</span>`;
     const daysPlayed = Object.keys(progress.days).length;
     $('activity-btn').innerHTML =
       `<span class="icon">📅</span><span>Activity</span><span class="count-pill">${plural(daysPlayed, 'day')}</span>`;
@@ -1013,17 +1165,46 @@
     show('home');
   }
 
-  function showStickerBook() {
+  // Finished books plus the one she is filling; later books are shown locked.
+  function openBooks() {
+    const current = currentBookFor(progress.stickers);
+    return current ? STICKER_BOOKS.slice(0, STICKER_BOOKS.indexOf(current) + 1) : STICKER_BOOKS;
+  }
+
+  function renderBookTabs(selected) {
+    const tabs = $('book-tabs');
+    tabs.innerHTML = '';
+    const open = openBooks();
+    for (const book of STICKER_BOOKS) {
+      const tab = document.createElement('button');
+      tab.className = book === selected ? 'book-tab active' : 'book-tab';
+      tab.textContent = open.includes(book) ? `${book.icon} ${book.name}` : `🔒 ${book.name}`;
+      tab.addEventListener('click', () => showStickerBook(book));
+      tabs.appendChild(tab);
+    }
+  }
+
+  function showStickerBook(book = openBooks().at(-1)) {
+    renderBookTabs(book);
     const grid = $('sticker-grid');
     grid.innerHTML = '';
-    for (const sticker of STICKERS) {
+    for (const sticker of book.stickers) {
       const owned = progress.stickers.includes(sticker);
-      const tile = document.createElement('div');
+      const tile = document.createElement(owned ? 'button' : 'div');
       tile.className = owned ? 'sticker-tile' : 'sticker-tile missing';
       tile.textContent = owned ? sticker : '?';
+      if (owned) {
+        tile.setAttribute('aria-label', `Play ${sticker}'s song`);
+        tile.addEventListener('click', () => playStickerJingle(tile, sticker));
+      }
       grid.appendChild(tile);
     }
-    $('book-count').textContent = `You have ${stickerCountText()} stickers`;
+    const ownedHere = ownedCountIn(book, progress.stickers);
+    const tapHint = ownedHere ? ' Tap one to hear its song!' : '';
+    const bookBefore = STICKER_BOOKS[STICKER_BOOKS.indexOf(book) - 1];
+    $('book-count').textContent = openBooks().includes(book)
+      ? `${book.icon} ${book.name}: ${ownedHere} of ${book.stickers.length}.${tapHint}`
+      : `🔒 Fill the ${bookBefore.name} book to open this one!`;
     show('stickers');
   }
 
@@ -1052,7 +1233,10 @@
           `All ${QUESTIONS_PER_SESSION} right on your first try: ⭐⭐⭐`,
           `${TWO_STARS_AT} or more right on your first try: ⭐⭐`,
           'Less than that: ⭐. Every round gets at least one star!',
-          `Get ${STARS_FOR_STICKER} or 3 stars to win a sticker.`,
+          'You win a sticker the first time you finish a level.',
+          'After that, every ⭐⭐⭐ round has a chance to win a sticker!',
+          'If you win a medal, you get the medal instead of a sticker.',
+          'Fill up a sticker book to open the next one.',
         ])}</ul>
       </section>
       <section class="info-card">
@@ -1095,6 +1279,13 @@
     if (!days.length) list.innerHTML = '<div class="empty-note">No rounds yet. Pick a level to start!</div>';
     $('activity-sub').textContent = `${plural(progress.totalStars, 'star')} on ${plural(days.length, 'day')}`;
     show('activity');
+  }
+
+  function playStickerJingle(tile, sticker) {
+    playNotes(jingleFor(sticker));
+    tile.classList.remove('wiggle');
+    void tile.offsetWidth; // restart the animation on repeat taps
+    tile.classList.add('wiggle');
   }
 
   function toggleSound() {
@@ -1244,7 +1435,6 @@
     $('done-message').textContent = round.message;
     $('score').textContent = `${round.firstTryCorrect} of ${QUESTIONS_PER_SESSION} right on the first try`;
     $('medal-note').textContent = '';
-    $('medal-note').classList.remove('new-medal');
     $('reward').classList.remove('shown');
   }
 
@@ -1262,19 +1452,16 @@
   }
 
   function showMedalNote(round) {
-    const medalLine = round.newMedal
-      ? `${round.newMedal.icon} You earned ${round.newMedal.name} on ${state.level.name}!`
-      : round.medalGoal;
-    const lines = [medalLine];
+    const lines = [round.medalGoal];
     if (round.trickyBeaten) lines.push(`💪 You beat ${plural(round.trickyBeaten, 'tricky fact')}!`);
     $('medal-note').innerHTML = lines.join('<br>');
-    $('medal-note').classList.toggle('new-medal', Boolean(round.newMedal));
   }
 
-  function celebrateMedal(round) {
-    showMedalNote(round);
-    playSound('medal');
-    fireConfetti(MAX_STARS);
+  function bookNoteFor(round) {
+    if (!round.filledBook) return '';
+    const filled = `📒 You filled the ${round.filledBook.name} book!`;
+    if (!round.openedBook) return `${filled} You collected every sticker!`;
+    return `${filled} New book: ${round.openedBook.icon} ${round.openedBook.name}`;
   }
 
   function finale(round) {
@@ -1282,18 +1469,28 @@
     fireConfetti(round.stars);
     $('done-total').textContent = progress.totalStars;
     $('done-total').classList.add('bump');
-    if (!round.newMedal) showMedalNote(round);
-    later(() => {
-      $('reward-sticker').textContent = round.sticker ?? '';
-      if (round.sticker) {
-        $('reward-label').textContent = round.isNewSticker ? 'New sticker!' : 'Bonus sticker!';
-        playSound('sticker');
-      } else {
-        $('reward-label').textContent = 'Try again to win a sticker!';
-      }
-      $('reward').classList.add('shown');
-      if (round.newMedal) later(() => celebrateMedal(round), 900);
-    }, 900);
+    later(() => revealReward(round), 900);
+  }
+
+  // Medals wait until here, so the next-medal line can't give one away before it is revealed.
+  function revealReward(round) {
+    showMedalNote(round);
+    $('reward-prize').textContent = round.newMedal?.icon ?? round.sticker ?? '';
+    $('reward-note').textContent = round.newMedal
+      ? `You earned a ${round.newMedal.name} medal on ${state.level.name}!`
+      : bookNoteFor(round);
+    if (round.newMedal || round.filledBook) {
+      $('reward-label').textContent = round.newMedal ? 'New medal!' : 'New sticker!';
+      playSound('medal');
+      fireConfetti(MAX_STARS);
+    } else if (round.sticker) {
+      $('reward-label').textContent = round.isNewSticker ? 'New sticker!' : 'Bonus sticker!';
+      playSound('sticker');
+    } else {
+      $('reward-label').textContent =
+        round.stars === MAX_STARS ? 'No sticker this time. Keep trying!' : 'Try again to win a sticker!';
+    }
+    $('reward').classList.add('shown');
   }
 
   function showDone() {
@@ -1330,8 +1527,8 @@
   $('again').addEventListener('click', () => startSession(state.level));
   $('home-btn').addEventListener('click', goHome);
   $('sound-toggle').addEventListener('click', toggleSound);
-  $('sticker-book-btn').addEventListener('click', showStickerBook);
-  $('sticker-total-btn').addEventListener('click', showStickerBook);
+  $('sticker-book-btn').addEventListener('click', () => showStickerBook());
+  $('sticker-total-btn').addEventListener('click', () => showStickerBook());
   $('book-back').addEventListener('click', goHome);
   $('activity-btn').addEventListener('click', showActivity);
   $('star-total-btn').addEventListener('click', showActivity);
