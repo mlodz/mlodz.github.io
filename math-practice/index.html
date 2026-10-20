@@ -888,6 +888,12 @@
 
   const progress = loadProgress();
 
+  // Best-effort ask not to clear this site's storage under space pressure. No UI either way: most
+  // browsers decide silently, and Safari doesn't implement this API at all as of iPadOS 17.
+  function requestPersistentStorage() {
+    navigator.storage?.persist?.().catch(() => {});
+  }
+
   function medalsEarnedOn(levelAlias) {
     const record = levelRecord(progress.rounds, levelAlias);
     return Math.max(progress.medals[levelAlias] ?? 0, medalsEarnedBy(record));
@@ -1536,6 +1542,7 @@
   $('info-btn').addEventListener('click', showInfo);
   $('info-back').addEventListener('click', goHome);
 
+  requestPersistentStorage();
   renderHome();
   renderKeypad();
 </script>
