@@ -204,6 +204,7 @@
   }
   .problem { font-size: clamp(48px, 15vw, 64px); font-weight: 700; line-height: 1.1; white-space: nowrap; }
   .problem.story { font-size: 22px; font-weight: 600; line-height: 1.4; white-space: normal; text-align: left; padding: 0 8px; }
+  .problem.labeled { font-size: clamp(32px, 9vw, 44px); white-space: normal; }
   .answer {
     display: inline-block;
     min-width: 2.2em;
@@ -553,6 +554,19 @@
       make: () => pairWhere(() => [randInt(1, 9), randInt(1, 9)], (a, b) => a + b <= 10),
     },
     {
+      alias: 'add-double-1to10',
+      name: 'Doubles', example: 'Double 6', color: '#14b8a6',
+      promptFor: a => `Double ${a}`,
+      make: () => { const n = randInt(1, 10); return [n, n]; },
+    },
+    {
+      alias: 'bridge-to-ten-1to9',
+      name: 'Bridge to Ten', example: '7 → 10', color: '#ec4899',
+      promptFor: a => `Bridge to Ten: ${a}`,
+      answerFor: (a, b) => b,
+      make: () => { const given = randInt(1, 9); return [given, 10 - given]; },
+    },
+    {
       alias: 'add-1digit-1digit-sum-over-10',
       name: 'Medium', example: '8 + 5', color: '#3fa7f5',
       make: () => pairWhere(() => [randInt(2, 9), randInt(2, 9)], (a, b) => a + b > 10),
@@ -856,6 +870,14 @@
   }
 
   // ---------- Saved progress (per device; the page still works if storage is blocked) ----------
+
+  // COMPATIBILITY RULE, never break this: every save ever written by an earlier version of this
+  // app must keep working. loadProgress merges a saved blob onto `fresh`, so a key an old save
+  // doesn't have just silently takes its default — that's what makes adding a new key, or a new
+  // level (with a new `alias`, see above), safe by itself. What's NOT safe: renaming or removing a
+  // key below, or changing what one means. That's a schema change — bump `schemaVersion` and write
+  // a migration in loadProgress instead. Before shipping a change here, load an old save into the
+  // new code and check her stars/medals/stickers/history all come through untouched.
 
   // Saved shape (bump `schemaVersion` and migrate in loadProgress if this changes incompatibly):
   //   totalStars: all-time stars; kept as a counter because `rounds` gets trimmed
@@ -1350,9 +1372,17 @@
   }
 
   function promptsFor(level, pairs) {
-    if (!level.stories) return pairs.map(([a, b]) => `${a} + ${b} =`);
-    const stories = takeStories(level, pairs.length);
-    return pairs.map(([a, b], i) => fillStory(stories[i], { a, b }));
+    if (level.stories) {
+      const stories = takeStories(level, pairs.length);
+      return pairs.map(([a, b], i) => fillStory(stories[i], { a, b }));
+    }
+    const promptFor = level.promptFor ?? ((a, b) => `${a} + ${b} =`);
+    return pairs.map(([a, b]) => promptFor(a, b));
+  }
+
+  // Every level but Bridge to Ten asks for the sum; Bridge to Ten asks for the missing partner (b).
+  function correctAnswerFor(level, a, b) {
+    return (level.answerFor ?? ((x, y) => x + y))(a, b);
   }
 
   function startSession(level) {
@@ -1379,6 +1409,7 @@
     state.triesLeft = TRIES_PER_QUESTION;
     ui.problem.textContent = state.problems[state.index].prompt;
     ui.problem.classList.toggle('story', Boolean(state.level.stories));
+    ui.problem.classList.toggle('labeled', Boolean(state.level.promptFor));
     renderAnswer();
     setFeedback('');
     renderMeter();
@@ -1397,7 +1428,7 @@
   function checkAnswer() {
     if (!state.typed) return;
     const { a, b } = state.problems[state.index];
-    const correct = a + b;
+    const correct = correctAnswerFor(state.level, a, b);
     const isRight = Number(state.typed) === correct;
     const firstTry = state.triesLeft === TRIES_PER_QUESTION;
     state.triesLeft--;
