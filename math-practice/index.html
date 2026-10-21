@@ -263,6 +263,7 @@
   .reward.shown { visibility: visible; animation: pop 0.5s ease-out; }
   .reward-label { font-size: 20px; font-weight: 600; color: #b07a00; }
   .reward-prize { font-size: 72px; line-height: 1.2; }
+  .reward-prize.playable { cursor: pointer; }
   .reward-note { font-size: 20px; font-weight: 600; color: var(--purple); }
   .reward-note:empty { display: none; }
 
@@ -1324,6 +1325,9 @@
     show('activity');
   }
 
+  // The sticker shown in the end-of-round reward box, if any; tapping the box plays its song.
+  let rewardSticker = null;
+
   function playStickerJingle(tile, sticker) {
     playNotes(jingleFor(sticker));
     tile.classList.remove('wiggle');
@@ -1488,6 +1492,8 @@
     $('score').textContent = `${round.firstTryCorrect} of ${QUESTIONS_PER_SESSION} right on the first try`;
     $('medal-note').textContent = '';
     $('reward').classList.remove('shown');
+    rewardSticker = null;
+    $('reward-prize').classList.remove('playable');
   }
 
   // Stars pop in one at a time, then fanfare + confetti, then the sticker reveal.
@@ -1527,7 +1533,9 @@
   // Medals wait until here, so the next-medal line can't give one away before it is revealed.
   function revealReward(round) {
     showMedalNote(round);
+    rewardSticker = round.sticker;
     $('reward-prize').textContent = round.newMedal?.icon ?? round.sticker ?? '';
+    $('reward-prize').classList.toggle('playable', Boolean(round.sticker));
     $('reward-note').textContent = round.newMedal
       ? `You earned a ${round.newMedal.name} medal on ${state.level.name}!`
       : bookNoteFor(round);
@@ -1585,6 +1593,9 @@
   $('activity-btn').addEventListener('click', showActivity);
   $('star-total-btn').addEventListener('click', showActivity);
   $('activity-back').addEventListener('click', goHome);
+  $('reward-prize').addEventListener('click', () => {
+    if (rewardSticker) playStickerJingle($('reward-prize'), rewardSticker);
+  });
   $('info-btn').addEventListener('click', showInfo);
   $('info-back').addEventListener('click', goHome);
 
