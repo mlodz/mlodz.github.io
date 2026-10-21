@@ -1029,8 +1029,18 @@
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return;
     audioCtx ??= new AudioContextClass();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (audioCtx.state !== 'running') audioCtx.resume();
   }
+
+  // On old iPadOS, backgrounding this app (switching away and back) can leave the AudioContext
+  // silently broken — `resume()` on it doesn't reliably bring sound back, even once its `state`
+  // reports 'running' again. Discarding it here and letting the next tap's unlockAudio() build a
+  // fresh one (inside that real user gesture, as iOS requires) is the only recovery that holds up.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || !audioCtx) return;
+    audioCtx.close().catch(() => {});
+    audioCtx = null;
+  });
 
   function playSound(name) {
     playNotes(SOUNDS[name]);
