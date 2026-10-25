@@ -149,6 +149,95 @@ const ZELDA_SUBTRACTION_STORIES = Object.freeze([
   "Link had {a:jar of honey|jars of honey}. He used {b:jar|jars} to bake sweets. How many jars of honey are left?",
 ]);
 
+// Equal groups: `{a}` groups of `{b}`, in either order, so each story reads right both ways round.
+const MULTIPLICATION_STORIES = Object.freeze([
+  "{a:dragonet has|dragonets each have} {b:scroll|scrolls} in a backpack. How many scrolls is that in all?",
+  "Link cooked {a:meal|meals}. Each meal used {b:Hylian shroom|Hylian shrooms}. How many shrooms did he use?",
+  "Glory has {a:pile|piles} of treasure. Each pile has {b:gem|gems}. How many gems does Glory have?",
+  "Link opened {a:treasure chest|treasure chests} in the Depths. Each chest had {b:rupee|rupees}. How many rupees did he find?",
+  "Sunny planted {a:row|rows} of flowers. Each row has {b:flower|flowers}. How many flowers did she plant?",
+  "{a:Korok has|Koroks each have} {b:Korok seed|Korok seeds}. How many Korok seeds is that in all?",
+  "Clay ate {b:cow|cows} every day for {a:day|days}. How many cows did he eat?",
+  "Link carried {a:bundle|bundles} of arrows. Each bundle had {b:arrow|arrows}. How many arrows did he carry?",
+  "{a:SeaWing carries|SeaWings each carry} {b:pearl|pearls}. How many pearls is that in all?",
+  "Link built {a:Zonai cart|Zonai carts}. Each cart has {b:wheel|wheels}. How many wheels did he use?",
+  "Starflight put {b:scroll|scrolls} on each of {a:shelf|shelves}. How many scrolls are on the shelves?",
+  "Link planted {a:row|rows} of Silent Princesses. Each row has {b:flower|flowers}. How many flowers did he plant?",
+  "Kinkajou has {a:vine|vines} with {b:ripe mango|ripe mangoes} on each one. How many mangoes is that?",
+  "Link picked {b:apple|apples} from each of {a:tree|trees}. How many apples did he pick?",
+  "Tsunami caught {b:fish|fish} in each of {a:net|nets}. How many fish did she catch?",
+  "Each Bokoblin has {b:arrow|arrows}. There are {a:Bokoblin|Bokoblins} in the camp. How many arrows is that in all?",
+  "Each IceWing guard has {b:icicle spear|icicle spears}. There are {a:guard|guards}. How many spears is that?",
+  "Link attached {b:Zonai fan|Zonai fans} to each of {a:raft|rafts}. How many fans did he use?",
+  "Peril lit {a:torch|torches}. Each torch burned for {b:hour|hours}. How many hours did the torches burn in all?",
+  "Purah has {a:shelf|shelves} of photos. Each shelf has {b:photo|photos}. How many photos does she have?",
+  "{a:RainWing naps|RainWings each nap} for {b:hour|hours}. How many nap hours is that in all?",
+  "Link cooked {b:egg|eggs} for each of {a:hungry Goron|hungry Gorons}. How many eggs did he cook?",
+  "Moon read {b:scroll|scrolls} on each of {a:day|days}. How many scrolls did she read?",
+  "Sidon gave {b:Zora scale|Zora scales} to each of {a:soldier|soldiers}. How many scales did he give out?",
+  "Blue spun {b:silk thread|silk threads} for each of {a:friend|friends}. How many threads did he spin?",
+  "Link walked {b:mile|miles} each day for {a:day|days}. How many miles did he walk?",
+  "Qibli has {a:water skin|water skins}. Each water skin holds {b:cup|cups} of water. How many cups is that in all?",
+  "Tulin did {b:loop|loops} in the air on each of {a:flight|flights}. How many loops did he do in all?",
+  "Winter built {a:ice tower|ice towers}. Each tower has {b:window|windows}. How many windows is that?",
+  "Link tied {b:balloon|balloons} to each of {a:crate|crates}. How many balloons did he tie?",
+  "Cricket has {a:jar|jars} of honey. Each jar has {b:spoonful|spoonfuls}. How many spoonfuls is that in all?",
+  "Each Lynel dropped {b:horn|horns}. Link defeated {a:Lynel|Lynels}. How many horns did he collect?",
+  "Swordtail did {b:flip|flips} in each of {a:show|shows}. How many flips did he do?",
+  "Link fed {b:carrot|carrots} to each of {a:horse|horses}. How many carrots did he use?",
+  "Turtle found {b:shell|shells} on each of {a:beach|beaches}. How many shells did he find?",
+  "Riju hung {b:lantern|lanterns} on each of {a:tent|tents}. How many lanterns did she hang?",
+  "Sundew has {a:flower pot|flower pots}. Each pot has {b:seed|seeds}. How many seeds did she plant?",
+  "Yunobo ate {b:rock roast|rock roasts} at each of {a:meal|meals}. How many rock roasts did he eat?",
+  "{a:SkyWing flew|SkyWings each flew} {b:mile|miles} in the race. How many miles did they fly in all?",
+  "Link stacked {a:stack|stacks} of stone blocks. Each stack has {b:block|blocks}. How many blocks is that?",
+]);
+
+// `{a}` is the total and `{b}` is how many ways it is split, so the answer is always a ÷ b. Some
+// stories share equally and some pack into groups; the math is the same.
+const DIVISION_STORIES = Object.freeze([
+  "Starflight shared {a:scroll|scrolls} equally among {b:dragonet|dragonets}. How many scrolls did each dragonet get?",
+  "Link split {a:arrow|arrows} into {b:equal bundle|equal bundles}. How many arrows are in each bundle?",
+  "Glory has {a:mango|mangoes}. She puts {b:mango|mangoes} in each basket. How many baskets does she fill?",
+  "Link has {a:Korok seed|Korok seeds}. He packs {b:seed|seeds} in each pouch. How many pouches does he fill?",
+  "Tsunami caught {a:fish|fish} and put them into {b:equal basket|equal baskets}. How many fish are in each basket?",
+  "Link has {a:rupee|rupees} to share equally among {b:Goron|Gorons}. How many rupees does each Goron get?",
+  "Clay has {a:cow|cows} to share equally among {b:hungry dragon|hungry dragons}. How many cows does each dragon get?",
+  "Link has {a:Hylian shroom|Hylian shrooms}. He uses {b:shroom|shrooms} in each stew. How many stews can he cook?",
+  "Sunny has {a:flower|flowers}. She puts {b:flower|flowers} in each vase. How many vases does she fill?",
+  "Purah has {a:photo|photos}. She puts {b:photo|photos} on each page. How many pages does she fill?",
+  "Moon has {a:scroll|scrolls}. She puts {b:scroll|scrolls} on each shelf. How many shelves does she fill?",
+  "Link has {a:Zonai charge|Zonai charges} to share equally among {b:machine|machines}. How many charges does each machine get?",
+  "Peril has {a:torch|torches} to put into {b:tunnel|tunnels}, the same number in each. How many torches go in each tunnel?",
+  "Link has {a:Zonai wheel|Zonai wheels}. Each cart needs {b:wheel|wheels}. How many carts can he build?",
+  "Blue has {a:silk thread|silk threads}. He uses {b:thread|threads} for each bag. How many bags can he make?",
+  "Link has {a:apple|apples} to feed {b:horse|horses}, the same number to each. How many apples does each horse get?",
+  "Kinkajou has {a:banana|bananas} to share equally among {b:friend|friends}. How many bananas does each friend get?",
+  "Sidon has {a:Zora scale|Zora scales}. He gives {b:scale|scales} to each soldier. How many soldiers get scales?",
+  "Winter built an ice wall with {a:block|blocks}. Each row has {b:block|blocks}. How many rows are there?",
+  "Link has {a:log|logs} for {b:campfire|campfires}, the same number for each. How many logs go on each fire?",
+  "Qibli has {a:gold coin|gold coins}. He puts the same number in each of {b:pouch|pouches}. How many coins are in each pouch?",
+  "Riju has {a:lantern|lanterns}. She hangs {b:lantern|lanterns} on each tent. How many tents get lanterns?",
+  "Cricket has {a:jar|jars} of honey. She packs {b:jar|jars} in each box. How many boxes does she need?",
+  "Link caught {a:fish|fish}. He cooks {b:fish|fish} in each meal. How many meals does he make?",
+  "Swordtail has {a:snack|snacks} to share equally among {b:dragonet|dragonets}. How many snacks does each one get?",
+  "Tulin has {a:feather|feathers} to share equally among {b:Rito|Rito}. How many feathers does each Rito get?",
+  "Turtle has {a:shell|shells}. He puts {b:shell|shells} in each pile. How many piles does he make?",
+  "Link has {a:bomb flower|bomb flowers}. He packs {b:flower|flowers} in each bag. How many bags does he fill?",
+  "Sundew has {a:seed|seeds}. She plants the same number in each of {b:pot|pots}. How many seeds go in each pot?",
+  "Yunobo has {a:rock roast|rock roasts} to share equally among {b:Goron|Gorons}. How many rock roasts does each Goron get?",
+  "{a:dragonet is|dragonets are} lined up in rows of {b:dragonet|dragonets}. How many rows are there?",
+  "Link has {a:ruby|rubies} from a Talus. He puts {b:ruby|rubies} in each pouch. How many pouches does he fill?",
+  "Starflight has {a:page|pages} of notes to read in {b:day|days}, the same number each day. How many pages does he read each day?",
+  "Link has {a:Brightbloom seed|Brightbloom seeds} for {b:cave|caves}, the same number for each. How many seeds go to each cave?",
+  "Glory has {a:orchid|orchids}. She puts {b:orchid|orchids} in each bunch. How many bunches does she make?",
+  "Link has {a:balloon|balloons}. He ties {b:balloon|balloons} to each crate. How many crates does he lift?",
+  "Clay has {a:rock|rocks} to carry in {b:trip|trips}, the same number each trip. How many rocks does he carry each trip?",
+  "Link has {a:egg|eggs} to cook for {b:hungry traveler|hungry travelers}, the same number each. How many eggs does each traveler get?",
+  "Tsunami has {a:pearl|pearls}. She puts {b:pearl|pearls} in each necklace. How many necklaces does she make?",
+  "Link has {a:stone block|stone blocks}. He stacks {b:block|blocks} in each tower. How many towers can he build?",
+]);
+
 function makeEasySubtraction() {
   const a = randInt(2, 10);
   return [a, randInt(1, a - 1)];
@@ -158,6 +247,34 @@ function makeEasySubtraction() {
 function makeCrossTenSubtraction() {
   return pairWhere(() => [randInt(11, 18), randInt(2, 9)], (a, b) => b > a % 10);
 }
+
+const EASY_TABLES = Object.freeze([2, 5, 10]);
+const MEDIUM_TABLES = Object.freeze([3, 4]);
+const HARD_TABLES = Object.freeze([6, 7, 8, 9]);
+
+function makeMultiplication(tables) {
+  return inRandomOrder([pick(tables), randInt(1, 10)]);
+}
+
+// One factor from a hard table, the other from 2 to 10, so new facts mix with review ones.
+function makeHardMultiplication() {
+  return inRandomOrder([pick(HARD_TABLES), randInt(2, 10)]);
+}
+
+// Built from the multiplication fact, so the answer is always a whole number from 2 to 10.
+function makeDivision(divisors) {
+  const divisor = pick(divisors);
+  return [divisor * randInt(2, 10), divisor];
+}
+
+function eitherOf(makeFirst, makeSecond) {
+  return () => (Math.random() < 0.5 ? makeFirst() : makeSecond());
+}
+
+const makeEasyMultiplication = () => makeMultiplication(EASY_TABLES);
+const makeMediumMultiplication = () => makeMultiplication(MEDIUM_TABLES);
+const makeEasyDivision = () => makeDivision(EASY_TABLES);
+const makeMediumDivision = () => makeDivision(MEDIUM_TABLES);
 
 // `alias` is the level's permanent saved-data key and is never shown. Changing one orphans
 // that level's saved stars and round history, so rename `name` freely but leave `alias` alone.
@@ -241,12 +358,60 @@ const SUBTRACTION_LEVELS = [
     alias: 'story-zelda-totk-subtraction',
     name: 'Word Problems', example: '🗡️ stories', color: '#0ea5a4',
     stories: ZELDA_SUBTRACTION_STORIES,
-    make: () => (Math.random() < 0.5 ? makeEasySubtraction() : makeCrossTenSubtraction()),
+    make: eitherOf(makeEasySubtraction, makeCrossTenSubtraction),
   },
   {
     alias: 'sub-2digit-up-to-10',
     name: 'Hard', example: '52 − 7', color: '#d946ef',
     make: () => [randInt(21, 99), randInt(1, 10)],
+  },
+];
+
+const MULTIPLICATION_LEVELS = [
+  {
+    alias: 'mul-tables-2-5-10',
+    name: 'Easy', example: '5 × 4', color: '#84cc16',
+    make: makeEasyMultiplication,
+  },
+  {
+    alias: 'mul-tables-3-4',
+    name: 'Medium', example: '3 × 7', color: '#eab308',
+    make: makeMediumMultiplication,
+  },
+  {
+    alias: 'story-wings-totk-multiplication',
+    name: 'Word Problems', example: '🐉🗡️ stories', color: '#f97316',
+    stories: MULTIPLICATION_STORIES,
+    make: eitherOf(makeEasyMultiplication, makeMediumMultiplication),
+  },
+  {
+    alias: 'mul-one-factor-6-to-9',
+    name: 'Hard', example: '7 × 8', color: '#dc2626',
+    make: makeHardMultiplication,
+  },
+];
+
+const DIVISION_LEVELS = [
+  {
+    alias: 'div-by-2-5-10',
+    name: 'Easy', example: '20 ÷ 5', color: '#2dd4bf',
+    make: makeEasyDivision,
+  },
+  {
+    alias: 'div-by-3-4',
+    name: 'Medium', example: '12 ÷ 3', color: '#a78bfa',
+    make: makeMediumDivision,
+  },
+  {
+    alias: 'story-wings-totk-division',
+    name: 'Word Problems', example: '🐉🗡️ stories', color: '#fb7185',
+    stories: DIVISION_STORIES,
+    make: eitherOf(makeEasyDivision, makeMediumDivision),
+  },
+  {
+    alias: 'div-by-6-to-9',
+    name: 'Hard', example: '56 ÷ 7', color: '#0f766e',
+    make: () => makeDivision(HARD_TABLES),
   },
 ];
 
@@ -257,4 +422,6 @@ function withOperator(op, levels) {
 const LEVELS = Object.freeze([
   ...withOperator('add', ADDITION_LEVELS),
   ...withOperator('subtract', SUBTRACTION_LEVELS),
+  ...withOperator('multiply', MULTIPLICATION_LEVELS),
+  ...withOperator('divide', DIVISION_LEVELS),
 ]);

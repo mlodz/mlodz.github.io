@@ -2,11 +2,10 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { loadMathPractice } = require('./load-scripts.js');
 
-const { LEVELS, OPERATORS, MAX_ANSWER_DIGITS, ZELDA_SUBTRACTION_STORIES, correctAnswerFor, fillStory, levelByAlias } =
-  loadMathPractice();
+const { LEVELS, OPERATORS, MAX_ANSWER_DIGITS, correctAnswerFor, fillStory, levelByAlias } = loadMathPractice();
 
 const SAMPLES_PER_LEVEL = 1000;
-const MIN_ZELDA_STORIES = 40;
+const MIN_STORIES_PER_LEVEL = 40;
 
 const inRange = (n, min, max) => n >= min && n <= max;
 const onesDigit = n => n % 10;
@@ -15,6 +14,19 @@ const isMultipleOfTen = n => n % 10 === 0;
 const isEasySubtraction = (a, b) => inRange(a, 2, 10) && inRange(b, 1, a - 1);
 const isCrossTenSubtraction = (a, b) =>
   inRange(a, 11, 18) && inRange(b, 2, 9) && b > onesDigit(a) && a - b < 10;
+
+// A times-table fact: one factor is in `tables`, the other runs 1 to 10, in either order.
+const isTableFact = tables => (a, b) =>
+  inRange(a, 1, 10) && inRange(b, 1, 10) && (tables.includes(a) || tables.includes(b));
+const isEasyMultiplication = isTableFact([2, 5, 10]);
+const isMediumMultiplication = isTableFact([3, 4]);
+const isHardMultiplication = (a, b) =>
+  (inRange(a, 6, 9) && inRange(b, 2, 10)) || (inRange(b, 6, 9) && inRange(a, 2, 10));
+
+// Dividend first: a whole number of divisors, with a quotient from 2 to 10.
+const isDivisionBy = divisors => (a, b) => divisors.includes(b) && a % b === 0 && inRange(a / b, 2, 10);
+const isEasyDivision = isDivisionBy([2, 5, 10]);
+const isMediumDivision = isDivisionBy([3, 4]);
 
 // Each level's rule, restated independently of its generator.
 const LEVEL_RULES = {
@@ -34,6 +46,14 @@ const LEVEL_RULES = {
   'sub-teen-1digit-cross-ten': isCrossTenSubtraction,
   'story-zelda-totk-subtraction': (a, b) => isEasySubtraction(a, b) || isCrossTenSubtraction(a, b),
   'sub-2digit-up-to-10': (a, b) => inRange(a, 21, 99) && inRange(b, 1, 10),
+  'mul-tables-2-5-10': isEasyMultiplication,
+  'mul-tables-3-4': isMediumMultiplication,
+  'story-wings-totk-multiplication': (a, b) => isEasyMultiplication(a, b) || isMediumMultiplication(a, b),
+  'mul-one-factor-6-to-9': isHardMultiplication,
+  'div-by-2-5-10': isEasyDivision,
+  'div-by-3-4': isMediumDivision,
+  'story-wings-totk-division': (a, b) => isEasyDivision(a, b) || isMediumDivision(a, b),
+  'div-by-6-to-9': isDivisionBy([6, 7, 8, 9]),
 };
 
 function samplesFrom(level) {
@@ -81,7 +101,29 @@ for (const level of LEVELS.filter(level => level.stories)) {
   });
 }
 
-test('there are enough Zelda subtraction stories, none repeated', () => {
-  assert.ok(ZELDA_SUBTRACTION_STORIES.length >= MIN_ZELDA_STORIES);
-  assert.equal(new Set(ZELDA_SUBTRACTION_STORIES).size, ZELDA_SUBTRACTION_STORIES.length);
+for (const level of LEVELS.filter(level => level.stories)) {
+  test(`${level.alias} has enough stories, none repeated`, () => {
+    const stories = [...level.stories];
+    assert.ok(stories.length >= MIN_STORIES_PER_LEVEL);
+    assert.equal(new Set(stories).size, stories.length);
+  });
+}
+
+test('Word Problems for multiplication and division mix easy and medium problems', () => {
+  for (const [alias, isEasy, isMedium] of [
+    ['story-wings-totk-multiplication', isEasyMultiplication, isMediumMultiplication],
+    ['story-wings-totk-division', isEasyDivision, isMediumDivision],
+  ]) {
+    const samples = samplesFrom(levelByAlias(alias));
+    assert.ok(samples.some(([a, b]) => isMedium(a, b) && !isEasy(a, b)), `${alias} never made a medium-only problem`);
+    assert.ok(samples.some(([a, b]) => isEasy(a, b)), `${alias} never made an easy problem`);
+  }
+});
+
+test('multiplication shows its factors in both orders', () => {
+  for (const alias of ['mul-tables-2-5-10', 'mul-tables-3-4', 'mul-one-factor-6-to-9']) {
+    const samples = samplesFrom(levelByAlias(alias));
+    assert.ok(samples.some(([a, b]) => a < b), `${alias} never made a smaller factor first`);
+    assert.ok(samples.some(([a, b]) => a > b), `${alias} never made a larger factor first`);
+  }
 });

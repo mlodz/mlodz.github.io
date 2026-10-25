@@ -28,12 +28,23 @@ Quote the glob. A directory argument doesn't work on current Node.
 
 ## Adding a level
 
-1. Add it to `ADDITION_LEVELS` or `SUBTRACTION_LEVELS` in `levels.js`. `make()` returns `[a, b]`; the answer is `a + b` or `a - b` unless the level sets `answerFor`. Use `promptFor` to word the question differently, or `stories` for word problems.
+1. Add it to the operator's list in `levels.js` (`ADDITION_LEVELS`, `SUBTRACTION_LEVELS`, `MULTIPLICATION_LEVELS` or `DIVISION_LEVELS`). `make()` returns `[a, b]`; the answer is `a + b`, `a - b`, `a × b` or `a ÷ b` unless the level sets `answerFor`. For division `a` is the dividend, and every generated problem must divide evenly (no remainders). Use `promptFor` to word the question differently, or `stories` for word problems.
 2. Give it a new, permanent `alias`. It keys that level's saved stars, medals, rounds, tricky facts and story position. Renaming `name` is fine; changing an `alias` orphans the saved data.
 3. Add a rule for it to `LEVEL_RULES` in `tests/levels.test.js`, written independently of the generator. A test fails if a level has no rule, so this can't be skipped.
 4. Run the tests.
 
-A new operator goes in the `OPERATORS` table in `problems.js` (its `keySign` becomes part of saved tricky-fact keys, so never change one), plus a `withOperator(...)` group in `LEVELS`. The home screen switcher builds itself from the table.
+A new operator goes in the `OPERATORS` table in `problems.js` (its `keySign` becomes part of saved tricky-fact keys, so never change one), plus a `withOperator(...)` group in `LEVELS`. The home screen switcher builds itself from the table. Each operator has four levels: Easy, Medium, Word Problems (Easy and Medium mixed, as stories) and Hard.
+
+## Level design
+
+| | Easy | Medium | Hard |
+| --- | --- | --- | --- |
+| Addition | sums to 10, doubles, bridge to ten | sums over 10, then teens | tens |
+| Subtraction | take away within 10 | teens, crossing ten | 2-digit minus 1 to 10 |
+| Multiplication | ×2, ×5, ×10 | ×3, ×4 | one factor 6 to 9, the other 2 to 10 |
+| Division | ÷2, ÷5, ÷10 | ÷3, ÷4 | ÷6 to ÷9 |
+
+Times-table facts take the other factor from 1 to 10. Division is built from the multiplication fact, so answers are always whole numbers from 2 to 10. Multiplication treats `3 × 7` and `7 × 3` as one tricky fact (`ignoresOrder` in `OPERATORS`) and shows either order. Addition does not, because its saved keys keep the order they were written in.
 
 ## Story templates
 

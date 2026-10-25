@@ -35,21 +35,37 @@ test('addition keeps the key format every old save used', () => {
 });
 
 test('keys round-trip for each operator', () => {
-  for (const [op, pair, key] of [['add', [7, 5], '7+5'], ['subtract', [12, 5], '12-5']]) {
+  const facts = [
+    ['add', [7, 5], '7+5'],
+    ['subtract', [12, 5], '12-5'],
+    ['multiply', [3, 7], '3x7'],
+    ['divide', [56, 7], '56/7'],
+  ];
+  for (const [op, pair, key] of facts) {
     assert.equal(problemKey(op, pair), key);
     assert.deepEqual([...pairFromKey(op, key)], pair);
   }
 });
 
+test('multiplication is one fact in either order, but the other operators are not', () => {
+  assert.equal(problemKey('multiply', [7, 3]), problemKey('multiply', [3, 7]));
+  assert.notEqual(problemKey('add', [12, 7]), problemKey('add', [7, 12]));
+  assert.notEqual(problemKey('divide', [12, 3]), problemKey('divide', [12, 4]));
+});
+
 test('prompts show the operator symbol, or the level\'s own wording', () => {
   assert.equal(buildPrompt(levelByAlias('add-teen-teen'), 12, 17), '12 + 17 =');
   assert.equal(buildPrompt(levelByAlias(EASY_SUBTRACTION), 9, 4), '9 − 4 =');
+  assert.equal(buildPrompt(levelByAlias('mul-one-factor-6-to-9'), 7, 8), '7 × 8 =');
+  assert.equal(buildPrompt(levelByAlias('div-by-6-to-9'), 56, 7), '56 ÷ 7 =');
   assert.equal(buildPrompt(levelByAlias('add-double-1to10'), 6, 6), 'Double 6');
 });
 
 test('answers follow the operator, or the level\'s own answer', () => {
   assert.equal(correctAnswerFor(levelByAlias('add-teen-teen'), 12, 17), 29);
   assert.equal(correctAnswerFor(levelByAlias(EASY_SUBTRACTION), 9, 4), 5);
+  assert.equal(correctAnswerFor(levelByAlias('mul-one-factor-6-to-9'), 7, 8), 56);
+  assert.equal(correctAnswerFor(levelByAlias('div-by-6-to-9'), 56, 7), 8);
   assert.equal(correctAnswerFor(levelByAlias('bridge-to-ten-1to9'), 3, 7), 7);
 });
 
@@ -71,6 +87,17 @@ test('tricky facts come back, up to the per-round limit', () => {
   const sessionKeys = keysOf('subtract', makeSession(level, trickyKeys));
   const trickyReturned = sessionKeys.filter(key => trickyKeys.includes(key));
   assert.equal(trickyReturned.length, MAX_TRICKY_PER_ROUND);
+});
+
+test('a tricky multiplication fact comes back in either order', () => {
+  const level = aLevelNeverMakingTheSamePairTwice('multiply');
+  const shownOrders = new Set();
+  for (let round = 0; round < 100; round++) {
+    for (const pair of makeSession(level, ['3x7'])) {
+      if (pair.includes(3) && pair.includes(7)) shownOrders.add(pair.join('x'));
+    }
+  }
+  assert.deepEqual([...shownOrders].sort(), ['3x7', '7x3']);
 });
 
 test('a level with too few distinct problems still fills the round', () => {

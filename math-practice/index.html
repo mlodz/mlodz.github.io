@@ -669,7 +669,7 @@
   //              { day: 'YYYY-MM-DD' local, finishedAt: epoch ms, level: alias,
   //                stars, firstTryCorrect, longestRun, sticker (null when none was won), isNewSticker }
   //   medals:    { [level alias]: medals earned, 0–4 }; only goes up, so trimming `rounds` can't take one away
-  //   trickyFacts: { [level alias]: { 'a+b' or 'a-b': first-try rights since her last miss } };
+  //   trickyFacts: { [level alias]: { 'a+b', 'a-b', 'axb' (smaller factor first) or 'a/b': first-try rights since her last miss } };
   //              a fact is removed once that reaches TRICKY_BEATEN_AFTER
   //   storyCursor: { [level alias]: stories used so far }; next story is cursor % length
   //   messageCursor: { silly, growth }: rounds that have used each set; next line is cursor % length

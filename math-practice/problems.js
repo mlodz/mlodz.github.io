@@ -25,17 +25,32 @@ function twoDigitNotEndingInZero(min, max) {
   return pairWhere(() => [randInt(min, max), 0], a => a % 10 !== 0)[0];
 }
 
-// `symbol` is what she sees. `keySign` is what saved tricky-fact keys use: "+" is how every addition
-// fact was saved before subtraction existed, so it must never change.
+function pick(list) {
+  return list[randInt(0, list.length - 1)];
+}
+
+function inRandomOrder([a, b]) {
+  return Math.random() < 0.5 ? [a, b] : [b, a];
+}
+
+// `symbol` is what she sees. `keySign` is what saved tricky-fact keys use, and it must never change
+// once saves exist: "+" is how every addition fact was saved before subtraction existed.
+// `ignoresOrder` makes 3 × 7 and 7 × 3 one fact, so a miss on either brings back either order.
+// Addition doesn't set it: its saved keys keep whatever order they were written in.
 const OPERATORS = Object.freeze({
   add: Object.freeze({ label: 'Addition', symbol: '+', keySign: '+', answerFor: (a, b) => a + b }),
   subtract: Object.freeze({ label: 'Subtraction', symbol: '−', keySign: '-', answerFor: (a, b) => a - b }),
+  multiply: Object.freeze({
+    label: 'Multiplication', symbol: '×', keySign: 'x', answerFor: (a, b) => a * b, ignoresOrder: true,
+  }),
+  divide: Object.freeze({ label: 'Division', symbol: '÷', keySign: '/', answerFor: (a, b) => a / b }),
 });
 
 const DEFAULT_OPERATION = 'add';
 
 function problemKey(op, [a, b]) {
-  return `${a}${OPERATORS[op].keySign}${b}`;
+  const [first, second] = OPERATORS[op].ignoresOrder ? [Math.min(a, b), Math.max(a, b)] : [a, b];
+  return `${first}${OPERATORS[op].keySign}${second}`;
 }
 
 function pairFromKey(op, key) {
@@ -62,9 +77,15 @@ function shuffled(list) {
   return copy;
 }
 
+// A saved key doesn't say which way round she last saw it, so an order-free fact is shown either way.
+function pairToShow(op, key) {
+  const pair = pairFromKey(op, key);
+  return OPERATORS[op].ignoresOrder ? inRandomOrder(pair) : pair;
+}
+
 // Tricky facts she has missed come back first, then random problems fill the round.
 function makeSession(level, trickyKeys) {
-  const problems = shuffled(trickyKeys).slice(0, MAX_TRICKY_PER_ROUND).map(key => pairFromKey(level.op, key));
+  const problems = shuffled(trickyKeys).slice(0, MAX_TRICKY_PER_ROUND).map(key => pairToShow(level.op, key));
   const seen = new Set(problems.map(pair => problemKey(level.op, pair)));
   for (let attempts = 0; problems.length < QUESTIONS_PER_SESSION; attempts++) {
     const pair = level.make();
