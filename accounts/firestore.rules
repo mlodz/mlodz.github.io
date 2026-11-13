@@ -1,0 +1,30 @@
+// Paste into Firebase console > Firestore Database > the (default) database > Rules > Publish.
+// There is no auth, so these rules only guard shape and immutability, not identity.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Profiles are create-only: name and pin can never change or be deleted.
+    match /players/{name} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['displayName', 'pin', 'createdAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0
+        && request.resource.data.displayName.size() < 20
+        && name == request.resource.data.displayName.lower()
+        && request.resource.data.pin is string
+        && request.resource.data.pin.matches('^[0-9]{4}$')
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+
+      // One document per game: { data: <the game's state>, updatedAt }.
+      match /games/{gameId} {
+        allow read: if true;
+        allow create, update: if request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+          && request.resource.data.data is map
+          && request.resource.data.updatedAt == request.time;
+        allow delete: if false;
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Accounts</title>
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Accounts">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#3454d1">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    padding: calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+    background: #3454d1;
+    color: #fff;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 420px; margin: 0 auto; }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  p { margin-bottom: 16px; line-height: 1.4; }
+  .counter { font-size: 64px; font-weight: 800; text-align: center; margin: 24px 0; }
+  button.action {
+    display: block; width: 100%; min-height: 56px; margin-bottom: 12px; border: 0; border-radius: 14px;
+    background: #fff; color: #3454d1; font-size: 18px; font-weight: 700;
+  }
+  .status { min-height: 22px; font-size: 14px; opacity: 0.85; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Accounts demo</h1>
+  <p>Sign in, tap to count, then open this page on another device and sign in to see the same number.</p>
+  <div id="badge"></div>
+  <div class="counter" id="count">–</div>
+  <button class="action" id="tap" type="button">Tap +1</button>
+  <button class="action" id="save" type="button">Save</button>
+  <p class="status" id="status"></p>
+</main>
+
+<script type="module">
+  import { createAccounts } from './accounts.js';
+
+  const accounts = createAccounts({ gameId: 'accounts-demo' });
+  const countNode = document.getElementById('count');
+  const statusNode = document.getElementById('status');
+  let state = { taps: 0 };
+
+  const showCount = () => { countNode.textContent = state.taps; };
+  const keepHighestTaps = (latest, mine) => ({ taps: Math.max(latest?.taps ?? 0, mine.taps) });
+
+  async function startSession() {
+    await accounts.requireSignIn();
+    state = (await accounts.load()) ?? { taps: 0 };
+    showCount();
+    accounts.onRemoteChange(remote => {
+      state = { taps: Math.max(state.taps, remote?.taps ?? 0) };
+      showCount();
+    });
+    accounts.autosave(() => state, { merge: keepHighestTaps });
+  }
+
+  document.getElementById('tap').addEventListener('click', () => {
+    state = { taps: state.taps + 1 };
+    showCount();
+  });
+
+  document.getElementById('save').addEventListener('click', async () => {
+    statusNode.textContent = 'Saving…';
+    try {
+      state = await accounts.save(latest => keepHighestTaps(latest, state));
+      showCount();
+      statusNode.textContent = `Saved ${state.taps} at ${new Date().toLocaleTimeString()}`;
+    } catch (error) {
+      statusNode.textContent = error.message;
+    }
+  });
+
+  accounts.mountBadge(document.getElementById('badge'));
+  accounts.onSignOut(() => {
+    state = { taps: 0 };
+    countNode.textContent = '–';
+    startSession().catch(error => { statusNode.textContent = error.message; });
+  });
+  startSession().catch(error => { statusNode.textContent = error.message; });
+</script>
+</body>
+</html>
